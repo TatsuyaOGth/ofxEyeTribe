@@ -3,36 +3,10 @@
 #include "ofMain.h"
 #include <include/gazeapi.h>
 
- 
 
-class ofxEyeTribeStateListener : public gtl::ITrackerStateListener
+class ofxEyeTribe
 {
-public:
-    gtl::Screen mScreen;
-    gtl::ServerState mSearverState;
-    
-    ofxEyeTribeStateListener()
-    {
-    }
-    
-    ~ofxEyeTribeStateListener()
-    {
-    }
-    
-    void on_tracker_connection_changed( int tracker_state )
-    {
-        mSearverState.trackerstate = tracker_state;
-    }
-    
-    void on_screen_state_changed( gtl::Screen const & screen )
-    {
-        mScreen = screen;
-    }
-};
-
-class ofxEyeTribe : public gtl::IGazeListener
-{
-    
+protected:
     gtl::GazeApi api;
     gtl::GazeData mGazeData;
     bool mfAutoUpdate;
@@ -52,7 +26,7 @@ public:
         }
     }
     
-    ~ofxEyeTribe()
+    virtual ~ofxEyeTribe()
     {
         if (mfAutoUpdate)
         {
@@ -66,15 +40,16 @@ public:
         update();
     }
     
-    void startServer()
+    string startServer()
     {
         string res;
         switch (ofGetTargetPlatform())
         {
             case OF_TARGET_OSX: res = ofSystem("open -n /Applications/EyeTribe/EyeTribe"); break;
-            default: ofLogError("ofxEyeTribe", "sorry, this addon is not supported your platform..."); break;
+            default: ofLogError("ofxEyeTribe", "sorry, this addon is not supported your platform..."); break; //TODO: multi pratform
         }
         ofLogNotice("ofxEyeTribe", res);
+        return res;
     }
     
     bool open(unsigned short port = 6555)
@@ -86,7 +61,6 @@ public:
         }
         if (api.connect(false, port)) // always pull-mode
         {
-            api.add_listener(*this);
             ofLogNotice("ofxEyeTribe", "connecte - port(" + ofToString(port) + ")");
             return true;
         }
@@ -98,7 +72,6 @@ public:
     {
         if (api.is_connected())
         {
-            api.remove_listener(*this);
             api.disconnect();
             ofLogNotice("ofxEyeTribe", "disconnect");
         }
@@ -112,12 +85,10 @@ public:
         }
     }
     
-    void on_gaze_data(const gtl::GazeData &gaze_data)
-    {
-        // dont use
-    }
     
-    
+    //------------------------------------------------------------------------------------------
+    //                                  getter
+    //------------------------------------------------------------------------------------------
     
     /** raw gaze coordinates in pixels @return ofVec2d */
     ofVec2f getPoint2dRaw() { return point2dToOfVec2d(mGazeData.raw); }
@@ -164,6 +135,13 @@ public:
     
     bool isConnected() { return api.is_connected(); }
     gtl::ServerState const & getServerState() { return api.get_server_state(); }
+    
+    
+    
+    //------------------------------------------------------------------------------------------
+    //                                  TODO: calibration
+    //------------------------------------------------------------------------------------------
+    
     
 };
 
