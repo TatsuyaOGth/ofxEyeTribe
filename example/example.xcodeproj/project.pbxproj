@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		91FAFA091A4359800048E880 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 91FAFA061A43595C0048E880 /* libboost_system.a */; };
-		91FAFA0A1A4359800048E880 /* libboost_thread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 91FAFA071A43595C0048E880 /* libboost_thread.a */; };
-		91FAFA0B1A4359800048E880 /* libGazeApiLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 91FAFA081A43595C0048E880 /* libGazeApiLib.a */; };
+		91AE68541A54130900E200E4 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 91AE684A1A54129100E200E4 /* libboost_system.a */; };
+		91AE68551A54130900E200E4 /* libboost_thread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 91AE684B1A54129100E200E4 /* libboost_thread.a */; };
+		91AE68561A54130900E200E4 /* libGazeApiLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 91AE684C1A54129100E200E4 /* libGazeApiLib.a */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -63,19 +63,19 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		91FAF9FB1A4359510048E880 /* gazeapi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gazeapi.h; sourceTree = "<group>"; };
-		91FAF9FC1A4359510048E880 /* gazeapi_interfaces.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gazeapi_interfaces.h; sourceTree = "<group>"; };
-		91FAF9FD1A4359510048E880 /* gazeapi_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gazeapi_types.h; sourceTree = "<group>"; };
-		91FAF9FF1A4359510048E880 /* gazeapi.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gazeapi.cpp; sourceTree = "<group>"; };
-		91FAFA001A4359510048E880 /* gazeapi_observable.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = gazeapi_observable.hpp; sourceTree = "<group>"; };
-		91FAFA011A4359510048E880 /* gazeapi_parser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gazeapi_parser.cpp; sourceTree = "<group>"; };
-		91FAFA021A4359510048E880 /* gazeapi_parser.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = gazeapi_parser.hpp; sourceTree = "<group>"; };
-		91FAFA031A4359510048E880 /* gazeapi_socket.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gazeapi_socket.cpp; sourceTree = "<group>"; };
-		91FAFA041A4359510048E880 /* gazeapi_socket.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = gazeapi_socket.hpp; sourceTree = "<group>"; };
-		91FAFA061A43595C0048E880 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_system.a; sourceTree = "<group>"; };
-		91FAFA071A43595C0048E880 /* libboost_thread.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_thread.a; sourceTree = "<group>"; };
-		91FAFA081A43595C0048E880 /* libGazeApiLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGazeApiLib.a; sourceTree = "<group>"; };
-		91FAFA0C1A4359A10048E880 /* ofxEyeTribe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxEyeTribe.h; sourceTree = "<group>"; };
+		91AE68411A54128800E200E4 /* ofxEyeTribe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxEyeTribe.h; sourceTree = "<group>"; };
+		91AE68451A54129100E200E4 /* gazeapi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gazeapi.h; sourceTree = "<group>"; };
+		91AE68461A54129100E200E4 /* gazeapi_interfaces.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gazeapi_interfaces.h; sourceTree = "<group>"; };
+		91AE68471A54129100E200E4 /* gazeapi_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gazeapi_types.h; sourceTree = "<group>"; };
+		91AE684A1A54129100E200E4 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_system.a; sourceTree = "<group>"; };
+		91AE684B1A54129100E200E4 /* libboost_thread.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_thread.a; sourceTree = "<group>"; };
+		91AE684C1A54129100E200E4 /* libGazeApiLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGazeApiLib.a; sourceTree = "<group>"; };
+		91AE684E1A54129100E200E4 /* gazeapi.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gazeapi.cpp; sourceTree = "<group>"; };
+		91AE684F1A54129100E200E4 /* gazeapi_observable.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = gazeapi_observable.hpp; sourceTree = "<group>"; };
+		91AE68501A54129100E200E4 /* gazeapi_parser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gazeapi_parser.cpp; sourceTree = "<group>"; };
+		91AE68511A54129100E200E4 /* gazeapi_parser.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = gazeapi_parser.hpp; sourceTree = "<group>"; };
+		91AE68521A54129100E200E4 /* gazeapi_socket.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gazeapi_socket.cpp; sourceTree = "<group>"; };
+		91AE68531A54129100E200E4 /* gazeapi_socket.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = gazeapi_socket.hpp; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -107,9 +107,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91FAFA091A4359800048E880 /* libboost_system.a in Frameworks */,
-				91FAFA0A1A4359800048E880 /* libboost_thread.a in Frameworks */,
-				91FAFA0B1A4359800048E880 /* libGazeApiLib.a in Frameworks */,
+				91AE68541A54130900E200E4 /* libboost_system.a in Frameworks */,
+				91AE68551A54130900E200E4 /* libboost_thread.a in Frameworks */,
+				91AE68561A54130900E200E4 /* libGazeApiLib.a in Frameworks */,
 				E7F985F815E0DEA3003869B5 /* Accelerate.framework in Frameworks */,
 				E7E077E815D3B6510020DFD4 /* QTKit.framework in Frameworks */,
 				E4EB6799138ADC1D00A09F29 /* GLUT.framework in Frameworks */,
@@ -133,58 +133,82 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		91FAF9F81A4359370048E880 /* ofxEyeTribe */ = {
+		91AE68401A54128800E200E4 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				91FAFA051A43595C0048E880 /* libs */,
-				91FAF9F91A4359510048E880 /* src */,
-			);
-			name = ofxEyeTribe;
-			sourceTree = "<group>";
-		};
-		91FAF9F91A4359510048E880 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				91FAF9FA1A4359510048E880 /* include */,
-				91FAF9FE1A4359510048E880 /* src */,
-				91FAFA0C1A4359A10048E880 /* ofxEyeTribe.h */,
+				91AE68411A54128800E200E4 /* ofxEyeTribe.h */,
 			);
 			name = src;
 			path = ../src;
 			sourceTree = "<group>";
 		};
-		91FAF9FA1A4359510048E880 /* include */ = {
+		91AE68421A54129100E200E4 /* libs */ = {
 			isa = PBXGroup;
 			children = (
-				91FAF9FB1A4359510048E880 /* gazeapi.h */,
-				91FAF9FC1A4359510048E880 /* gazeapi_interfaces.h */,
-				91FAF9FD1A4359510048E880 /* gazeapi_types.h */,
+				91AE68431A54129100E200E4 /* EyeTribeCppClient */,
+			);
+			name = libs;
+			path = ../libs;
+			sourceTree = "<group>";
+		};
+		91AE68431A54129100E200E4 /* EyeTribeCppClient */ = {
+			isa = PBXGroup;
+			children = (
+				91AE68441A54129100E200E4 /* include */,
+				91AE68481A54129100E200E4 /* lib */,
+				91AE684D1A54129100E200E4 /* src */,
+			);
+			path = EyeTribeCppClient;
+			sourceTree = "<group>";
+		};
+		91AE68441A54129100E200E4 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				91AE68451A54129100E200E4 /* gazeapi.h */,
+				91AE68461A54129100E200E4 /* gazeapi_interfaces.h */,
+				91AE68471A54129100E200E4 /* gazeapi_types.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
 		};
-		91FAF9FE1A4359510048E880 /* src */ = {
+		91AE68481A54129100E200E4 /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				91FAF9FF1A4359510048E880 /* gazeapi.cpp */,
-				91FAFA001A4359510048E880 /* gazeapi_observable.hpp */,
-				91FAFA011A4359510048E880 /* gazeapi_parser.cpp */,
-				91FAFA021A4359510048E880 /* gazeapi_parser.hpp */,
-				91FAFA031A4359510048E880 /* gazeapi_socket.cpp */,
-				91FAFA041A4359510048E880 /* gazeapi_socket.hpp */,
+				91AE68491A54129100E200E4 /* osx */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		91AE68491A54129100E200E4 /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				91AE684A1A54129100E200E4 /* libboost_system.a */,
+				91AE684B1A54129100E200E4 /* libboost_thread.a */,
+				91AE684C1A54129100E200E4 /* libGazeApiLib.a */,
+			);
+			path = osx;
+			sourceTree = "<group>";
+		};
+		91AE684D1A54129100E200E4 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				91AE684E1A54129100E200E4 /* gazeapi.cpp */,
+				91AE684F1A54129100E200E4 /* gazeapi_observable.hpp */,
+				91AE68501A54129100E200E4 /* gazeapi_parser.cpp */,
+				91AE68511A54129100E200E4 /* gazeapi_parser.hpp */,
+				91AE68521A54129100E200E4 /* gazeapi_socket.cpp */,
+				91AE68531A54129100E200E4 /* gazeapi_socket.hpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
 		};
-		91FAFA051A43595C0048E880 /* libs */ = {
+		91FAF9F81A4359370048E880 /* ofxEyeTribe */ = {
 			isa = PBXGroup;
 			children = (
-				91FAFA061A43595C0048E880 /* libboost_system.a */,
-				91FAFA071A43595C0048E880 /* libboost_thread.a */,
-				91FAFA081A43595C0048E880 /* libGazeApiLib.a */,
+				91AE68421A54129100E200E4 /* libs */,
+				91AE68401A54128800E200E4 /* src */,
 			);
-			name = libs;
-			path = ../libs;
+			name = ofxEyeTribe;
 			sourceTree = "<group>";
 		};
 		BB4B014C10F69532006C3DED /* addons */ = {
@@ -399,8 +423,12 @@
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(OF_CORE_HEADERS)",
-					../src,
+					../../../addons/ofxEyeTribe/src,
+					../../../addons/ofxEyeTribe/libs/EyeTribeCppClient/include,
+					../../../addons/ofxEyeTribe/libs/EyeTribeCppClient/src,
+					../../../addons/ofxEyeTribe/libs/EyeTribeCppClient,
 				);
+				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -435,8 +463,12 @@
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(OF_CORE_HEADERS)",
-					../src,
+					../../../addons/ofxEyeTribe/src,
+					../../../addons/ofxEyeTribe/libs/EyeTribeCppClient/include,
+					../../../addons/ofxEyeTribe/libs/EyeTribeCppClient/src,
+					../../../addons/ofxEyeTribe/libs/EyeTribeCppClient,
 				);
+				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -468,7 +500,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"<Multiple",
 					"values>",
-					../libs,
+					../../../addons/ofxEyeTribe/libs/EyeTribeCppClient/lib/osx,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)Debug";
 				WRAPPER_EXTENSION = app;
@@ -494,7 +526,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"<Multiple",
 					"values>",
-					../libs,
+					../../../addons/ofxEyeTribe/libs/EyeTribeCppClient/lib/osx,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
