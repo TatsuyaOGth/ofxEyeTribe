@@ -9,11 +9,18 @@ class ofxEyeTribe
 protected:
     gtl::GazeApi api;
     gtl::GazeData mGazeData;
+    gtl::Screen mScreen;
     bool mfAutoUpdate;
     
     ofVec2f point2dToOfVec2d(const gtl::Point2D point2d)
     {
         return ofVec2f(point2d.x, point2d.y);
+    }
+    
+    void normarize(gtl::Point2D & point2d)
+    {
+        point2d.x = point2d.x / mScreen.screenresw;
+        point2d.y = point2d.y / mScreen.screenresh;
     }
     
 public:
@@ -82,6 +89,7 @@ public:
         if (api.is_connected())
         {
             api.get_frame(mGazeData);
+            api.get_screen(mScreen);
         }
     }
     

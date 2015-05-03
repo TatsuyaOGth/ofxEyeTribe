@@ -6,7 +6,7 @@ void testApp::setup()
     ofSetCircleResolution(45);
     
     tet.open();
-    // tet.open(6555); //<---- change port
+    // tet.open(6555); //<---- if you want change device port
 }
 
 void testApp::draw()
