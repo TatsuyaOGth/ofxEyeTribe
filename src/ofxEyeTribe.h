@@ -17,7 +17,7 @@ protected:
         return ofVec2f(point2d.x, point2d.y);
     }
     
-    void normarize(gtl::Point2D & point2d)
+    void normalize(gtl::Point2D & point2d)
     {
         point2d.x = point2d.x / mScreen.screenresw;
         point2d.y = point2d.y / mScreen.screenresh;
@@ -52,8 +52,13 @@ public:
         string res;
         switch (ofGetTargetPlatform())
         {
-            case OF_TARGET_OSX: res = ofSystem("open -n /Applications/EyeTribe/EyeTribe"); break;
-            default: ofLogError("ofxEyeTribe", "sorry, this addon is not supported your platform..."); break; //TODO: multi pratform
+            case OF_TARGET_OSX:
+                res = ofSystem("open -n /Applications/EyeTribe/EyeTribe");
+                break;
+            default:
+                ofLogError("ofxEyeTribe", "sorry, this addon is not supported your platform...");
+                break;
+            //TODO: multi platform
         }
         ofLogNotice("ofxEyeTribe", res);
         return res;
