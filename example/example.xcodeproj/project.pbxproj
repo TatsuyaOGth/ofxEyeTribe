@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		916C0DC01B8F108800968152 /* ofxEyeTribe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 916C0DBF1B8F108800968152 /* ofxEyeTribe.cpp */; };
 		917514891AF619C8006BFE87 /* libGazeApiLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 91AE684C1A54129100E200E4 /* libGazeApiLib.a */; };
 		91AE68541A54130900E200E4 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 91AE684A1A54129100E200E4 /* libboost_system.a */; };
 		91AE68551A54130900E200E4 /* libboost_thread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 91AE684B1A54129100E200E4 /* libboost_thread.a */; };
@@ -63,6 +64,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		916C0DBF1B8F108800968152 /* ofxEyeTribe.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxEyeTribe.cpp; sourceTree = "<group>"; };
 		91AE68411A54128800E200E4 /* ofxEyeTribe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxEyeTribe.h; sourceTree = "<group>"; };
 		91AE68451A54129100E200E4 /* gazeapi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gazeapi.h; sourceTree = "<group>"; };
 		91AE68461A54129100E200E4 /* gazeapi_interfaces.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gazeapi_interfaces.h; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 		91AE68401A54128800E200E4 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				916C0DBF1B8F108800968152 /* ofxEyeTribe.cpp */,
 				91AE68411A54128800E200E4 /* ofxEyeTribe.h */,
 			);
 			name = src;
@@ -367,6 +370,7 @@
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* testApp.cpp in Sources */,
+				916C0DC01B8F108800968152 /* ofxEyeTribe.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

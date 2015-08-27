@@ -1,3 +1,28 @@
+/**
+ The MIT License (MIT)
+ 
+ Copyright (c) 2015 TatsuyaOGth (https://github.com/TatsuyaOGth)
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ 
+ NOTE: The Eye Tribe SDK is licensed under the BSD-style license found in the LICENSE file.
+ */
 #pragma once
 
 #include "ofMain.h"
@@ -7,144 +32,97 @@
 class ofxEyeTribe
 {
 protected:
-    gtl::GazeApi api;
-    gtl::GazeData mGazeData;
-    gtl::Screen mScreen;
-    bool mfAutoUpdate;
+    gtl::GazeApi    api;
+    gtl::GazeData   mGazeData;
+    gtl::Screen     mScreen;
+    bool            mfAutoUpdate;
+    bool            mfFrameNew;
+    int             mApiTime;
     
-    ofVec2f point2dToOfVec2d(const gtl::Point2D point2d)
-    {
-        return ofVec2f(point2d.x, point2d.y);
-    }
-    
-    void normarize(gtl::Point2D & point2d)
-    {
-        point2d.x = point2d.x / mScreen.screenresw;
-        point2d.y = point2d.y / mScreen.screenresh;
-    }
+    ofPoint         point2dToOfVec2d(const gtl::Point2D point2d);
+    void            normarize(gtl::Point2D & point2d);
+    void            onUpdate(ofEventArgs &e);
     
 public:
+    ofxEyeTribe(bool autoUpdate = true);
+    virtual ~ofxEyeTribe();
     
-    ofxEyeTribe(bool autoUpdate = true): mfAutoUpdate(autoUpdate)
-    {
-        if (mfAutoUpdate)
-        {
-            ofAddListener(ofEvents().update, this, &ofxEyeTribe::onUpdate);
-        }
-    }
+    string          startServer();
     
-    virtual ~ofxEyeTribe()
-    {
-        if (mfAutoUpdate)
-        {
-            ofRemoveListener(ofEvents().update, this, &ofxEyeTribe::onUpdate);
-        }
-        this->close();
-    }
+    /**
+     *  Open port
+     *
+     *  @param port number of port
+     *  @return bool (if faled this process than return false)
+     */
+    bool            open(unsigned short port = 6555);
     
-    void onUpdate(ofEventArgs &e)
-    {
-        update();
-    }
+    /**
+     *  Close port
+     */
+    void            close();
     
-    string startServer()
-    {
-        string res;
-        switch (ofGetTargetPlatform())
-        {
-            case OF_TARGET_OSX: res = ofSystem("open -n /Applications/EyeTribe/EyeTribe"); break;
-            default: ofLogError("ofxEyeTribe", "sorry, this addon is not supported your platform..."); break; //TODO: multi pratform
-        }
-        ofLogNotice("ofxEyeTribe", res);
-        return res;
-    }
-    
-    bool open(unsigned short port = 6555)
-    {
-        if (api.is_connected())
-        {
-            ofLogNotice("ofxEyeTribe", "is already connected");
-            return true;
-        }
-        if (api.connect(false, port)) // always pull-mode
-        {
-            ofLogNotice("ofxEyeTribe", "connecte - port(" + ofToString(port) + ")");
-            return true;
-        }
-        ofLogError("ofxEyeTribe", "faild connect");
-        return false;
-    }
-    
-    void close()
-    {
-        if (api.is_connected())
-        {
-            api.disconnect();
-            ofLogNotice("ofxEyeTribe", "disconnect");
-        }
-    }
-    
-    void update()
-    {
-        if (api.is_connected())
-        {
-            api.get_frame(mGazeData);
-            api.get_screen(mScreen);
-        }
-    }
-    
+    /**
+     *  Update api values.
+     *  You do not need to call this function because this will register on oF's update event listener at the constructor.
+     *  If you want to call this function by yourself.
+     */
+    void            update();
     
     //------------------------------------------------------------------------------------------
     //                                  getter
     //------------------------------------------------------------------------------------------
     
     /** raw gaze coordinates in pixels @return ofVec2d */
-    ofVec2f getPoint2dRaw() { return point2dToOfVec2d(mGazeData.raw); }
+    ofPoint         getPoint2dRaw();
     
     /** smoothed coordinates in pix @return ofVec2d */
-    ofVec2f getPoint2dAvg() { return point2dToOfVec2d(mGazeData.avg); }
+    ofPoint         getPoint2dAvg();
+    
+    /** raw gaze coordinates in pixels @return ofVec2d */
+    ofPoint         getLeftEyeRaw();
+    
+    /** smoothed coordinates in pix @return ofVec2d */
+    ofPoint         getLeftEyeAvg();
+    
+    /** pupil size @return float */
+    float           getLeftEyePupilSize();
+    
+    /** pupil coordinates normalized @return ofVec2d */
+    ofPoint         getLeftEyePcenter();
     
     
     
     /** raw gaze coordinates in pixels @return ofVec2d */
-    ofVec2f getLeftEyeRaw() { return point2dToOfVec2d(mGazeData.lefteye.raw); }
+    ofPoint         getRightEyeRaw();
     
     /** smoothed coordinates in pix @return ofVec2d */
-    ofVec2f getLeftEyeAvg() { return point2dToOfVec2d(mGazeData.lefteye.avg); }
+    ofPoint         getRightEyeAvg();
     
     /** pupil size @return float */
-    float getLeftEyePupilSize() { return mGazeData.lefteye.psize; }
+    float           getRightEyePupilSize();
     
     /** pupil coordinates normalized @return ofVec2d */
-    ofVec2f getLeftEyePcenter() { return point2dToOfVec2d(mGazeData.lefteye.pcenter); }
-    
-    
-    
-    /** raw gaze coordinates in pixels @return ofVec2d */
-    ofVec2f getRightEyeRaw() { return point2dToOfVec2d(mGazeData.righteye.raw); }
-    
-    /** smoothed coordinates in pix @return ofVec2d */
-    ofVec2f getRightEyeAvg() { return point2dToOfVec2d(mGazeData.righteye.avg); }
-    
-    /** pupil size @return float */
-    float getRightEyePupilSize() { return mGazeData.righteye.psize; }
-    
-    /** pupil coordinates normalized @return ofVec2d */
-    ofVec2f getRightEyePcenter() { return point2dToOfVec2d(mGazeData.righteye.pcenter); }
+    ofPoint         getRightEyePcenter();
     
     
     /** timestamp @return int */
-    int getTimestamp() { return mGazeData.time; }
+    int             getTimestamp();
     
     /** is fixated? @return bool */
-    bool isFix() { return mGazeData.fix; }
+    bool            isFix();
     
+    /** check connection @return bool */
+    bool            isConnected();
     
+    /** check frame new @return bool */
+    bool            isFrameNew();
     
-    bool isConnected() { return api.is_connected(); }
-    gtl::ServerState const & getServerState() { return api.get_server_state(); }
+    /** get a api's object includ server state values @return struct gtl::ServerState */
+    gtl::ServerState const & getServerState();
     
-    
+    /** get a api's object includ screen values @return struct gtl::Screen */
+    gtl::Screen const & getScreen();
     
     //------------------------------------------------------------------------------------------
     //                                  TODO: calibration

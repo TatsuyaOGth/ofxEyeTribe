@@ -20,6 +20,16 @@ To add ofxEyeTrive to your project:
 
 The included example demonstrates these steps.
 
+#Change Log
+
+You can checkout for each version. See Tags in master branch.  
+
+Ver. 0.2
+
+- Imprementations were divided from ofxEyeTrive.h, (if you created a your original project include version 0.1 ofxEyeTribe, please add `ofxEyeTribe/src/ofxEyeTribe.cpp` to your project.)
+
+Ver. 0.1
+
 
 
 #Licensing
