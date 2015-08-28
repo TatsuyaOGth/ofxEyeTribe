@@ -40,7 +40,7 @@ protected:
     int             mApiTime;
     
     ofPoint         point2dToOfVec2d(const gtl::Point2D point2d);
-    void            normarize(gtl::Point2D & point2d);
+    void            normalize(gtl::Point2D & point2d);
     void            onUpdate(ofEventArgs &e);
     
 public:
