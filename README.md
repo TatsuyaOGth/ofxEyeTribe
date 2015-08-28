@@ -24,11 +24,15 @@ The included example demonstrates these steps.
 
 You can checkout for each version. See Tags in master branch.  
 
-Ver. 0.2
+**Ver. 0.3**
+
+- Supported Visual Studio 2015 x64 (Thank you [Matt](https://github.com/mattfelsen))
+
+**Ver. 0.2**
 
 - Imprementations were divided from ofxEyeTrive.h, (if you created a your original project include version 0.1 ofxEyeTribe, please add `ofxEyeTribe/src/ofxEyeTribe.cpp` to your project.)
 
-Ver. 0.1
+**Ver. 0.1**
 
 
 
