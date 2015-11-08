@@ -36,8 +36,6 @@ protected:
     gtl::GazeData   mGazeData;
     gtl::Screen     mScreen;
     bool            mfAutoUpdate;
-    bool            mfFrameNew;
-    int             mApiTime;
     
     ofPoint         point2dToOfVec2d(const gtl::Point2D point2d);
     void            normalize(gtl::Point2D & point2d);
@@ -116,7 +114,7 @@ public:
     bool            isConnected();
     
     /** check frame new @return bool */
-    bool            isFrameNew();
+    OF_DEPRECATED_MSG("ofxEyeTribe::isFrameNew() was deprecated from ver.0.4, now this is allways return true.", bool isFrameNew());
     
     /** get a api's object includ server state values @return struct gtl::ServerState */
     gtl::ServerState const & getServerState();

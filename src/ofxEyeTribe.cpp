@@ -27,8 +27,6 @@
 
 ofxEyeTribe::ofxEyeTribe(bool autoUpdate)
 : mfAutoUpdate(autoUpdate)
-, mfFrameNew(false)
-, mApiTime(0)
 {
     if (mfAutoUpdate)
     {
@@ -105,8 +103,6 @@ void ofxEyeTribe::update()
     {
         api.get_frame(mGazeData);
         api.get_screen(mScreen);
-        mfFrameNew = mGazeData.time > mApiTime;
-        mApiTime = mGazeData.time;
     }
 }
 
@@ -182,7 +178,7 @@ bool ofxEyeTribe::isConnected()
 
 bool ofxEyeTribe::isFrameNew()
 {
-    return mfFrameNew;
+    return true;
 }
 
 gtl::ServerState const & ofxEyeTribe::getServerState()

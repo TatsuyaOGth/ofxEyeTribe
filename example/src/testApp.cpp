@@ -69,7 +69,7 @@ void testApp::draw()
     
     // get gaze data and server state
     //-----------------------------------------------------------------------------
-    gtl::ServerState s = tet.getServerState();
+    const gtl::ServerState& s = tet.getServerState();
     stringstream ss;
     ss << "fps: " << ofGetFrameRate() << endl;
     ss << endl;
