@@ -50,7 +50,7 @@ ofPoint ofxEyeTribe::point2dToOfVec2d(const gtl::Point2D point2d)
     return ofPoint(point2d.x, point2d.y);
 }
 
-void ofxEyeTribe::normarize(gtl::Point2D & point2d)
+void ofxEyeTribe::normalize(gtl::Point2D & point2d)
 {
     point2d.x = point2d.x / mScreen.screenresw;
     point2d.y = point2d.y / mScreen.screenresh;
