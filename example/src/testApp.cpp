@@ -29,6 +29,26 @@ void testApp::draw()
     
     
     
+    // draw calibration points
+    //-----------------------------------------------------------------------------
+    if (tet.isCalibrationSucceed())
+    {
+        ofFill();
+        
+        const gtl::CalibResult& result = tet.getCalibResult();
+        for (const auto& e : result.calibpoints)
+        {
+            // blue circles are calibration points
+            ofSetColor(ofColor::blue);
+            ofCircle(e.cp.x, e.cp.y, 5);
+            // sky blue circles are mean estimated points
+            ofSetColor(ofColor::skyBlue);
+            ofCircle(e.mecp.x, e.mecp.y, 5);
+        }
+    }
+    
+    
+    
     // draw gaze data
     //-----------------------------------------------------------------------------
     if (tet.isConnected())
@@ -70,6 +90,7 @@ void testApp::draw()
     // get gaze data and server state
     //-----------------------------------------------------------------------------
     const gtl::ServerState& s = tet.getServerState();
+    const gtl::CalibResult& cr = tet.getCalibResult();
     stringstream ss;
     ss << "fps: " << ofGetFrameRate() << endl;
     ss << endl;
@@ -97,6 +118,13 @@ void testApp::draw()
     ss << "push: " << s.push << endl;
     ss << "tracker state: " << s.trackerstate << endl;
     ss << "version: " << s.version << endl;
+    ss << endl;
+    ss << "[ CALIBRATION ]" << endl;
+    ss << "result: " << (cr.result ? "succeed" : "failed") << endl;
+    ss << "average error in degrees: " << cr.deg << endl;
+    ss << "average error in degs, left eye: " << cr.degl << endl;
+    ss << "average error in degs, right eye: " << cr.degr << endl;
+    ss << "number of calibration points: " << cr.calibpoints.size() << endl;
     ss << endl;
     ss << "[ KEY ]" << endl;
     ss << "f: " << "toggle fulscreen" << endl;

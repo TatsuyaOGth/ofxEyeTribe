@@ -65,8 +65,13 @@ string ofxEyeTribe::startServer()
     // TODO: support multi platform
     switch (ofGetTargetPlatform())
     {
-        case OF_TARGET_OSX: res = ofSystem("open -n /Applications/EyeTribe/EyeTribe"); break;
-        default: ofLogError("ofxEyeTribe", "sorry, this addon is not supported your platform..."); break; //TODO: multi pratform
+        case OF_TARGET_OSX:
+            res = ofSystem("open -n /Applications/EyeTribe/EyeTribe");
+            break;
+            
+        default:
+            ofLogError("ofxEyeTribe", "sorry, this addon is not supported your platform...");
+            break;
     }
     ofLogNotice("ofxEyeTribe", res);
     return res;
@@ -103,7 +108,28 @@ void ofxEyeTribe::update()
     {
         api.get_frame(mGazeData);
         api.get_screen(mScreen);
+        api.get_calib_result(mCalibResult);
     }
+}
+
+void ofxEyeTribe::addUpdateListener()
+{
+    if (mfAutoUpdate == false)
+    {
+        ofAddListener(ofEvents().update, this, &ofxEyeTribe::onUpdate, OF_EVENT_ORDER_BEFORE_APP);
+        mfAutoUpdate = true;
+    }
+    else ofLogWarning("ofxEyeTribe", "already registerd update listener");
+}
+
+void ofxEyeTribe::removeUpdateListener()
+{
+    if (mfAutoUpdate)
+    {
+        ofRemoveListener(ofEvents().update, this, &ofxEyeTribe::onUpdate);
+        mfAutoUpdate = false;
+    }
+    else ofLogWarning("ofxEyeTribe", "update listener was unregisterd");
 }
 
 
@@ -181,6 +207,11 @@ bool ofxEyeTribe::isFrameNew()
     return true;
 }
 
+bool ofxEyeTribe::isCalibrationSucceed()
+{
+    return mCalibResult.result;
+}
+
 gtl::ServerState const & ofxEyeTribe::getServerState()
 {
     return api.get_server_state();
@@ -190,4 +221,40 @@ gtl::Screen const & ofxEyeTribe::getScreen()
 {
     return mScreen;
 }
-    
+
+gtl::GazeData const & ofxEyeTribe::getGazeData()
+{
+    return mGazeData;
+}
+
+gtl::CalibResult const & ofxEyeTribe::getCalibResult()
+{
+    return mCalibResult;
+}
+
+
+//------------------------------------------------------------------------------------------
+//                                  calibration
+//------------------------------------------------------------------------------------------
+
+void ofxEyeTribe::startCalibration(const int numCalibrationPoints)
+{
+    api.calibration_clear();
+    api.calibration_start(numCalibrationPoints);
+}
+
+void ofxEyeTribe::abortCalibration()
+{
+    api.calibration_abort();
+}
+
+void ofxEyeTribe::startCalibrationPoint(const int x, const int y)
+{
+    api.calibration_point_start(x, y);
+}
+
+void ofxEyeTribe::endCalibrationPoint()
+{
+    api.calibration_point_end();
+}
+

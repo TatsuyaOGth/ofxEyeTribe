@@ -35,6 +35,7 @@ protected:
     gtl::GazeApi    api;
     gtl::GazeData   mGazeData;
     gtl::Screen     mScreen;
+    gtl::CalibResult mCalibResult;
     bool            mfAutoUpdate;
     
     ofPoint         point2dToOfVec2d(const gtl::Point2D point2d);
@@ -63,9 +64,19 @@ public:
     /**
      *  Update api values.
      *  You do not need to call this function because this will register on oF's update event listener at the constructor.
-     *  If you want to call this function by yourself.
+     *  If you want to call this yourself, please call ofxEyeTribe::removeUpdateListener().
      */
     void            update();
+    
+    /**
+     *  Registering update listener
+     */
+    void            addUpdateListener();
+    
+    /**
+     *  Remove update listener
+     */
+    void            removeUpdateListener();
     
     //------------------------------------------------------------------------------------------
     //                                  getter
@@ -116,16 +127,32 @@ public:
     /** check frame new @return bool */
     OF_DEPRECATED_MSG("ofxEyeTribe::isFrameNew() was deprecated from ver.0.4, now this is allways return true.", bool isFrameNew());
     
+    
+    
+    /** was the calibration successful? @return succeed is true */
+    bool            isCalibrationSucceed();
+    
+    
+    
     /** get a api's object includ server state values @return struct gtl::ServerState */
     gtl::ServerState const & getServerState();
     
     /** get a api's object includ screen values @return struct gtl::Screen */
     gtl::Screen const & getScreen();
     
+    /** get a api's object includ gaze data @return struct gtl::GazeData */
+    gtl::GazeData const & getGazeData();
+    
+    /** get a api's object includ calibration results @return struct gtl::CalibResult */
+    gtl::CalibResult const & getCalibResult();
+    
     //------------------------------------------------------------------------------------------
-    //                                  TODO: calibration
+    //                                  calibration
     //------------------------------------------------------------------------------------------
     
-    
+    void startCalibration(const int numCalibrationPoints);
+    void abortCalibration();
+    void startCalibrationPoint(const int x, const int y);
+    void endCalibrationPoint();
 };
 
