@@ -27,6 +27,7 @@
 
 ofxEyeTribe::ofxEyeTribe(bool autoUpdate)
 : mfAutoUpdate(autoUpdate)
+, mfCalibrating(false)
 {
     if (mfAutoUpdate)
     {
@@ -132,6 +133,16 @@ void ofxEyeTribe::removeUpdateListener()
     else ofLogWarning("ofxEyeTribe", "update listener was unregisterd");
 }
 
+void ofxEyeTribe::drawCalibration()
+{
+    ofPushStyle();
+    ofFill();
+    ofSetColor(0, 255, 0);
+    const ofPoint& p = mCalibPoints[mCurrentCalibIndex];
+    ofCircle(p, 5);
+    ofPopStyle();
+}
+
 
 //------------------------------------------------------------------------------------------
 //                                  getter
@@ -207,6 +218,11 @@ bool ofxEyeTribe::isFrameNew()
     return true;
 }
 
+bool ofxEyeTribe::isCalibrating()
+{
+    return mfCalibrating;
+}
+
 bool ofxEyeTribe::isCalibrationSucceed()
 {
     return mCalibResult.result;
@@ -237,24 +253,53 @@ gtl::CalibResult const & ofxEyeTribe::getCalibResult()
 //                                  calibration
 //------------------------------------------------------------------------------------------
 
-void ofxEyeTribe::startCalibration(const int numCalibrationPoints)
+bool ofxEyeTribe::startCalibration(const int numCalibrationPoints)
 {
-    api.calibration_clear();
-    api.calibration_start(numCalibrationPoints);
+    if (numCalibrationPoints == 9 || numCalibrationPoints == 12 || numCalibrationPoints == 16)
+    {
+        mCalibPoints.clear();
+        api.calibration_clear();
+        
+        // TODO: set calibration points
+        for (int i = 0; i < numCalibrationPoints; ++i)
+        {
+            mCalibPoints.push_back(ofPoint(ofRandom(ofGetWidth()), ofRandom(ofGetHeight())));
+        }
+        mCurrentCalibIndex = 0;
+        
+        bool res = api.calibration_start(numCalibrationPoints);
+        mfCalibrating = res;
+        return res;
+    }
+    
+    ofLogError("ofxEyeTribe", "set which number of calibration points is 9, 12 or 16");
+    return false;
 }
 
 void ofxEyeTribe::abortCalibration()
 {
     api.calibration_abort();
+    mfCalibrating = false;
 }
 
 void ofxEyeTribe::startCalibrationPoint(const int x, const int y)
 {
-    api.calibration_point_start(x, y);
+    if (mfCalibrating)
+    {
+        const ofPoint& p = mCalibPoints[mCurrentCalibIndex];
+        api.calibration_point_start(p.x, p.y);
+    }
 }
 
 void ofxEyeTribe::endCalibrationPoint()
 {
-    api.calibration_point_end();
+    if (mfCalibrating)
+    {
+        api.calibration_point_end();
+        
+        if (mCurrentCalibIndex < mCalibPoints.size() - 1)
+        {
+            mCurrentCalibIndex++;
+        }
+    }
 }
-

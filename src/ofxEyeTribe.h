@@ -30,14 +30,18 @@
 
 
 class ofxEyeTribe
-{
+{    
 protected:
     gtl::GazeApi    api;
     gtl::GazeData   mGazeData;
     gtl::Screen     mScreen;
     gtl::CalibResult mCalibResult;
     bool            mfAutoUpdate;
+    vector<ofPoint> mCalibPoints;
+    int             mCurrentCalibIndex;
+    bool            mfCalibrating;
     
+protected:
     ofPoint         point2dToOfVec2d(const gtl::Point2D point2d);
     void            normalize(gtl::Point2D & point2d);
     void            onUpdate(ofEventArgs &e);
@@ -77,6 +81,11 @@ public:
      *  Remove update listener
      */
     void            removeUpdateListener();
+    
+    /**
+     *  Draw calibration view
+     */
+    void            drawCalibration();
     
     //------------------------------------------------------------------------------------------
     //                                  getter
@@ -127,7 +136,8 @@ public:
     /** check frame new @return bool */
     OF_DEPRECATED_MSG("ofxEyeTribe::isFrameNew() was deprecated from ver.0.4, now this is allways return true.", bool isFrameNew());
     
-    
+    /** is now calibrating? @return bool */
+    bool            isCalibrating();
     
     /** was the calibration successful? @return succeed is true */
     bool            isCalibrationSucceed();
@@ -150,9 +160,11 @@ public:
     //                                  calibration
     //------------------------------------------------------------------------------------------
     
-    void startCalibration(const int numCalibrationPoints);
+    bool startCalibration(const int numCalibrationPoints);
     void abortCalibration();
     void startCalibrationPoint(const int x, const int y);
     void endCalibrationPoint();
+    
+    
 };
 
