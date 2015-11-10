@@ -304,6 +304,12 @@ bool ofxEyeTribe::calibrationStart(const int numCalibrationPoints)
     {
         api.calibration_clear();
         
+        const gtl::ServerState& serverState = api.get_server_state();
+        if (serverState.iscalibrating)
+        {
+            api.calibration_abort();
+        }
+        
         bool res = api.calibration_start(numCalibrationPoints);
         mfCalibrating = res;
         return res;

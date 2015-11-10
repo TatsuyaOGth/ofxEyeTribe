@@ -199,10 +199,10 @@ public:
     
     /** Begin new calibration sesssion.
      *
-     * \param[in] point_count The number of points to use for calibration.
+     * \param[in] point_count The number of points to use for calibration. (only 9/12/16)
      * \returns indication of the request processed okay.
      */
-    bool calibrationStart(const int numCalibrationPoints);
+    bool calibrationStart(const int numCalibrationPoints = 9);
     
     /** Abort the current calibration session.
      *
@@ -235,13 +235,13 @@ public:
      *  Begin easily calibration process (process automatically), you have to call update() and drawCalibration().
      *  IF you want abort calibration, call stopCalibrationProcess.
      *
-     *  @param numCalibrationPoints The number of points to use for calibration.
+     *  @param numCalibrationPoints The number of points to use for calibration. (only 9/12/16)
      *  @param followPointTime Time (sec.) to following for each calibration point (minimum = 1.0)
      *  @param calibPointSize Size (pixel) of each calibration point.
      *  @return indication of the request processed okay.
      *  @sa drawCalibration, stopCalibrationProcess
      */
-    bool startCalibrationProcess(const int numCalibrationPoints, const float followPointTime = 1.5, const float calibPointSize = 25.0);
+    bool startCalibrationProcess(const int numCalibrationPoints = 9, const float followPointTime = 1.5, const float calibPointSize = 25.0);
     
     /**
      *  Stop calibration process.

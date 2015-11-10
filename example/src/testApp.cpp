@@ -146,7 +146,7 @@ void testApp::keyPressed(int key)
             tet.stopCalibrationProcess();
         }
         else {
-            bool calibration = tet.startCalibrationProcess(9);
+            bool calibration = tet.startCalibrationProcess();
             
             if (calibration)
                 ofLogNotice("ofxEyeTribe", "start calibration process");
