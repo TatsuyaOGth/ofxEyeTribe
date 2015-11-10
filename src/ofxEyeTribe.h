@@ -102,6 +102,28 @@ public:
      */
     void            drawCalibration();
     
+    
+    
+    //------------------------------------------------------------------------------------------
+    //                                  setter
+    //------------------------------------------------------------------------------------------
+    
+    /**
+     *  Define screen values
+     *
+     *  @param screenIndex    Screen index
+     *  @param widthInPixels  Screen resolution width in pixels
+     *  @param heightInPixels Screen resolution height in pixels
+     *  @param widthInMeters  Screen physical width in meters
+     *  @param heightInMeters Screen physical height in meters
+     */
+    void setScreen(const int screenIndex,
+                   const int widthInPixels,
+                   const int heightInPixels,
+                   const float widthInMeters,
+                   const float heightInMeters);
+    
+    
     //------------------------------------------------------------------------------------------
     //                                  getter
     //------------------------------------------------------------------------------------------
@@ -214,7 +236,8 @@ public:
      *  IF you want abort calibration, call stopCalibrationProcess.
      *
      *  @param numCalibrationPoints The number of points to use for calibration.
-     *  @param followPointTime Time (sec.) to following for each calibration point.
+     *  @param followPointTime Time (sec.) to following for each calibration point (minimum = 1.0)
+     *  @param calibPointSize Size (pixel) of each calibration point.
      *  @return indication of the request processed okay.
      *  @sa drawCalibration, stopCalibrationProcess
      */

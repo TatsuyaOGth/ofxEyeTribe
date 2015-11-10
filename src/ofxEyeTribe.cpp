@@ -140,6 +140,20 @@ void ofxEyeTribe::removeUpdateListener()
     else ofLogWarning("ofxEyeTribe", "update listener was unregisterd");
 }
 
+//------------------------------------------------------------------------------------------
+//                                  setter
+//------------------------------------------------------------------------------------------
+
+void ofxEyeTribe::setScreen(const int screenIndex,
+                            const int widthInPixels,
+                            const int heightInPixels,
+                            const float widthInMeters,
+                            const float heightInMeters)
+{
+    gtl::Screen newScreen;
+    newScreen.set(screenIndex, widthInPixels, heightInPixels, widthInMeters, heightInMeters);
+    api.set_screen(newScreen);
+}
 
 //------------------------------------------------------------------------------------------
 //                                  getter

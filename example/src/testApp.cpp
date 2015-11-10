@@ -27,35 +27,16 @@ void testApp::draw()
         }
     }
     
+
+        
+    // draw calibration view (calibration process/calibration result)
+    //-----------------------------------------------------------------------------
+    tet.drawCalibration();
+
     
     
-    if (tet.isCalibrating())
+    if (tet.isCalibrating() == false)
     {
-        // draw calibration view
-        //-----------------------------------------------------------------------------
-        tet.drawCalibration();
-        
-    }
-    else {
-        
-        // draw calibrated points
-        //-----------------------------------------------------------------------------
-        if (tet.isCalibrationSucceed())
-        {
-            ofFill();
-            
-            const gtl::CalibResult& result = tet.getCalibResult();
-            for (const auto& e : result.calibpoints)
-            {
-                // blue circles are calibration points
-                ofSetColor(ofColor::blue);
-                ofCircle(e.cp.x, e.cp.y, 5);
-                // sky blue circles are mean estimated points
-                ofSetColor(ofColor::skyBlue);
-                ofCircle(e.mecp.x, e.mecp.y, 5);
-            }
-        }
-        
         // draw gaze data
         //-----------------------------------------------------------------------------
         ofFill();
@@ -142,7 +123,8 @@ void testApp::draw()
         ss << "f: " << "toggle fulscreen" << endl;
         ss << "o: " << "open(connect)" << endl;
         ss << "c: " << "close(disconnect)" << endl;
-        ss << "s: " << "starting server";
+        ss << "s: " << "starting server" << endl;
+        ss << "SPACE: " << "start calibration process";
         
         ofSetColor(255, 255, 255);
         ofDrawBitmapString(ss.str(), 20, 20);
