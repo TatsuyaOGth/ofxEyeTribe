@@ -29,22 +29,37 @@
 #include <include/gazeapi.h>
 
 
-class ofxEyeTribe
-{    
+class ofxEyeTribe : public gtl::ICalibrationProcessHandler
+{
+    // listener
+    void on_calibration_started();
+    void on_calibration_progress( double progress );
+    void on_calibration_processing();
+    void on_calibration_result( bool is_calibrated, gtl::CalibResult const & calib_result );
+    
 protected:
     gtl::GazeApi    api;
     gtl::GazeData   mGazeData;
     gtl::Screen     mScreen;
     gtl::CalibResult mCalibResult;
     bool            mfAutoUpdate;
+
+    // calibration
     vector<ofPoint> mCalibPoints;
     int             mCurrentCalibIndex;
     bool            mfCalibrating;
+    float           mTick;
+    float           mDuration;
+    enum            { CALIB_STAND_BY, CALIB_START, CALIB_FOLLOW_POINT, CALIB_POINT };
+    int             mCalibState;
+    float           mCalibFollowPointTime;
+    float           mCalibPointSize;
     
 protected:
     ofPoint         point2dToOfVec2d(const gtl::Point2D point2d);
     void            normalize(gtl::Point2D & point2d);
     void            onUpdate(ofEventArgs &e);
+    void            updateCalibrationProcess();
     
 public:
     ofxEyeTribe(bool autoUpdate = true);
@@ -160,11 +175,55 @@ public:
     //                                  calibration
     //------------------------------------------------------------------------------------------
     
-    bool startCalibration(const int numCalibrationPoints);
-    void abortCalibration();
-    void startCalibrationPoint(const int x, const int y);
-    void endCalibrationPoint();
+    /** Begin new calibration sesssion.
+     *
+     * \param[in] point_count The number of points to use for calibration.
+     * \returns indication of the request processed okay.
+     */
+    bool calibrationStart(const int numCalibrationPoints);
+    
+    /** Abort the current calibration session.
+     *
+     * Aborts the current calibration session, but does not clear any valid calibration in the server
+     */
+    void calibrationAbort();
+    
+    /** Begin calibration a new calibration point.
+     *
+     * \param[in] x x-coordinate of calibration point.
+     * \param[in] y y-coordinate of calibration point.
+     * \sa calibrationPointEnd.
+     */
+    void calibrationPointStart(const int x, const int y);
+    
+    /** Begin calibration a new calibration point.
+     *
+     * \param[in] p ofPoint of calibration point.
+     * \sa calibrationPointEnd.
+     */
+    void calibrationPointStart(const ofPoint& p);
+    
+    /** End current calibration point.
+     * \sa calibrationPointStart(const int x, const int y).
+     */
+    void calibrationPointEnd();
     
     
+    /**
+     *  Begin easily calibration process (process automatically), you have to call update() and drawCalibration().
+     *  IF you want abort calibration, call stopCalibrationProcess.
+     *
+     *  @param numCalibrationPoints The number of points to use for calibration.
+     *  @param followPointTime Time (sec.) to following for each calibration point.
+     *  @return indication of the request processed okay.
+     *  @sa drawCalibration, stopCalibrationProcess
+     */
+    bool startCalibrationProcess(const int numCalibrationPoints, const float followPointTime = 1.5, const float calibPointSize = 25.0);
+    
+    /**
+     *  Stop calibration process.
+     *  @sa startCalibrationProcess.
+     */
+    void stopCalibrationProcess();
 };
 

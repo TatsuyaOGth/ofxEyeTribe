@@ -38,7 +38,7 @@ void testApp::draw()
     }
     else {
         
-        // draw calibration points
+        // draw calibrated points
         //-----------------------------------------------------------------------------
         if (tet.isCalibrationSucceed())
         {
@@ -157,9 +157,20 @@ void testApp::keyPressed(int key)
     if (key == 'c') tet.close();
     if (key == 's') tet.startServer();
     
-    if (key == '1') cout << tet.startCalibration(9) << endl;;
-    if (key == '0') tet.abortCalibration();
-    if (key == '2') tet.startCalibrationPoint(0, 0);
-    if (key == '3') tet.endCalibrationPoint();
+    if (key == ' ')
+    {
+        if (tet.isCalibrating())
+        {
+            tet.stopCalibrationProcess();
+        }
+        else {
+            bool calibration = tet.startCalibrationProcess(9);
+            
+            if (calibration)
+                ofLogNotice("ofxEyeTribe", "start calibration process");
+            else
+                ofLogError("ofxEyeTribe", "calibration does not started");
+        }
+    }
 }
 
