@@ -24,6 +24,11 @@ The included example demonstrates these steps.
 
 You can checkout for each version. See Tags in master branch.  
 
+**Ver. 0.4**
+
+- Fixed VS example project file (added cpp file, you have to "Release" build)
+- Added some calibration functions 
+
 **Ver. 0.3**
 
 - Supported Visual Studio 2015 x64 (Thank you [Matt](https://github.com/mattfelsen))
