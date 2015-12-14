@@ -509,8 +509,7 @@
 					"<Multiple",
 					"values>",
 					../../../addons/ofxEyeTribe/libs/EyeTribeCppClient/lib/osx,
-					/Users/tatsuyaogusu/Documents/Program/openFrameworks/of_v0.8.4_osx_release/addons/ofxEyeTribe/libs/EyeTribeCppClient/lib/osx,
-					/Users/tatsuyaogusu/Documents/Program/openFrameworks/of_v0.8.4_osx_release/addons/ofxEyeTribe/libs/boost/lib/osx,
+					../../../addons/ofxEyeTribe/libs/boost/lib/osx,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)Debug";
 				WRAPPER_EXTENSION = app;
@@ -537,8 +536,7 @@
 					"<Multiple",
 					"values>",
 					../../../addons/ofxEyeTribe/libs/EyeTribeCppClient/lib/osx,
-					/Users/tatsuyaogusu/Documents/Program/openFrameworks/of_v0.8.4_osx_release/addons/ofxEyeTribe/libs/EyeTribeCppClient/lib/osx,
-					/Users/tatsuyaogusu/Documents/Program/openFrameworks/of_v0.8.4_osx_release/addons/ofxEyeTribe/libs/boost/lib/osx,
+					../../../addons/ofxEyeTribe/libs/boost/lib/osx,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

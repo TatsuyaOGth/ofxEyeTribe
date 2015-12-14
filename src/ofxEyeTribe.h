@@ -29,19 +29,37 @@
 #include <include/gazeapi.h>
 
 
-class ofxEyeTribe
+class ofxEyeTribe : public gtl::ICalibrationProcessHandler
 {
+    // listener
+    void on_calibration_started();
+    void on_calibration_progress( double progress );
+    void on_calibration_processing();
+    void on_calibration_result( bool is_calibrated, gtl::CalibResult const & calib_result );
+    
 protected:
     gtl::GazeApi    api;
     gtl::GazeData   mGazeData;
     gtl::Screen     mScreen;
+    gtl::CalibResult mCalibResult;
     bool            mfAutoUpdate;
-    bool            mfFrameNew;
-    int             mApiTime;
+
+    // calibration
+    vector<ofPoint> mCalibPoints;
+    int             mCurrentCalibIndex;
+    bool            mfCalibrating;
+    float           mTick;
+    float           mDuration;
+    enum            { CALIB_STAND_BY, CALIB_START, CALIB_FOLLOW_POINT, CALIB_POINT };
+    int             mCalibState;
+    float           mCalibFollowPointTime;
+    float           mCalibPointSize;
     
+protected:
     ofPoint         point2dToOfVec2d(const gtl::Point2D point2d);
     void            normalize(gtl::Point2D & point2d);
     void            onUpdate(ofEventArgs &e);
+    void            updateCalibrationProcess();
     
 public:
     ofxEyeTribe(bool autoUpdate = true);
@@ -65,9 +83,46 @@ public:
     /**
      *  Update api values.
      *  You do not need to call this function because this will register on oF's update event listener at the constructor.
-     *  If you want to call this function by yourself.
+     *  If you want to call this yourself, please call ofxEyeTribe::removeUpdateListener().
      */
     void            update();
+    
+    /**
+     *  Registering update listener
+     */
+    void            addUpdateListener();
+    
+    /**
+     *  Remove update listener
+     */
+    void            removeUpdateListener();
+    
+    /**
+     *  Draw calibration view
+     */
+    void            drawCalibration();
+    
+    
+    
+    //------------------------------------------------------------------------------------------
+    //                                  setter
+    //------------------------------------------------------------------------------------------
+    
+    /**
+     *  Define screen values
+     *
+     *  @param screenIndex    Screen index
+     *  @param widthInPixels  Screen resolution width in pixels
+     *  @param heightInPixels Screen resolution height in pixels
+     *  @param widthInMeters  Screen physical width in meters
+     *  @param heightInMeters Screen physical height in meters
+     */
+    void setScreen(const int screenIndex,
+                   const int widthInPixels,
+                   const int heightInPixels,
+                   const float widthInMeters,
+                   const float heightInMeters);
+    
     
     //------------------------------------------------------------------------------------------
     //                                  getter
@@ -116,7 +171,15 @@ public:
     bool            isConnected();
     
     /** check frame new @return bool */
-    bool            isFrameNew();
+    OF_DEPRECATED_MSG("ofxEyeTribe::isFrameNew() was deprecated from ver.0.4, now this is allways return true.", bool isFrameNew());
+    
+    /** is now calibrating? @return bool */
+    bool            isCalibrating();
+    
+    /** was the calibration successful? @return succeed is true */
+    bool            isCalibrationSucceed();
+    
+    
     
     /** get a api's object includ server state values @return struct gtl::ServerState */
     gtl::ServerState const & getServerState();
@@ -124,10 +187,66 @@ public:
     /** get a api's object includ screen values @return struct gtl::Screen */
     gtl::Screen const & getScreen();
     
+    /** get a api's object includ gaze data @return struct gtl::GazeData */
+    gtl::GazeData const & getGazeData();
+    
+    /** get a api's object includ calibration results @return struct gtl::CalibResult */
+    gtl::CalibResult const & getCalibResult();
+    
     //------------------------------------------------------------------------------------------
-    //                                  TODO: calibration
+    //                                  calibration
     //------------------------------------------------------------------------------------------
     
+    /** Begin new calibration sesssion.
+     *
+     * \param[in] point_count The number of points to use for calibration. (only 9/12/16)
+     * \returns indication of the request processed okay.
+     */
+    bool calibrationStart(const int numCalibrationPoints = 9);
     
+    /** Abort the current calibration session.
+     *
+     * Aborts the current calibration session, but does not clear any valid calibration in the server
+     */
+    void calibrationAbort();
+    
+    /** Begin calibration a new calibration point.
+     *
+     * \param[in] x x-coordinate of calibration point.
+     * \param[in] y y-coordinate of calibration point.
+     * \sa calibrationPointEnd.
+     */
+    void calibrationPointStart(const int x, const int y);
+    
+    /** Begin calibration a new calibration point.
+     *
+     * \param[in] p ofPoint of calibration point.
+     * \sa calibrationPointEnd.
+     */
+    void calibrationPointStart(const ofPoint& p);
+    
+    /** End current calibration point.
+     * \sa calibrationPointStart(const int x, const int y).
+     */
+    void calibrationPointEnd();
+    
+    
+    /**
+     *  Begin easily calibration process (process automatically), you have to call update() and drawCalibration().
+     *  IF you want abort calibration, call stopCalibrationProcess.
+     *
+     *  @param numCalibrationPoints The number of points to use for calibration. (only 9/12/16)
+     *  @param followPointTime Time (sec.) to following for each calibration point (minimum = 1.0)
+     *  @param calibPointSize Size (pixel) of each calibration point.
+     *  @return indication of the request processed okay.
+     *  @sa drawCalibration, stopCalibrationProcess
+     */
+    bool startCalibrationProcess(const int numCalibrationPoints = 9, const float followPointTime = 1.5, const float calibPointSize = 25.0);
+    
+    /**
+     *  Stop calibration process.
+     *  @sa startCalibrationProcess.
+     */
+    void stopCalibrationProcess();
 };
 
