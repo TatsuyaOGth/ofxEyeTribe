@@ -1,6 +1,6 @@
-#include "testApp.h"
+#include "ofApp.h"
 
-void testApp::setup()
+void ofApp::setup()
 {
     ofSetFrameRate(60);
     ofSetCircleResolution(45);
@@ -9,7 +9,7 @@ void testApp::setup()
     // tet.open(6555); //<---- if you want change device port
 }
 
-void testApp::draw()
+void ofApp::draw()
 {
     
     
@@ -20,10 +20,10 @@ void testApp::draw()
     ofSetColor(0, 0, 0);
     for (int i = 0; i < ofGetHeight(); i += 20)
     {
-        ofLine(0, i, ofGetWidth(), i);
+        ofDrawLine(0, i, ofGetWidth(), i);
         for (int j = 0; j < ofGetWidth(); j += 20)
         {
-            ofLine(j, 0, j, ofGetHeight());
+            ofDrawLine(j, 0, j, ofGetHeight());
         }
     }
     
@@ -43,32 +43,32 @@ void testApp::draw()
         
         // red circle is raw gaze point
         ofSetColor(ofColor::red);
-        ofCircle(tet.getPoint2dRaw(), 5);
+        ofDrawCircle(tet.getPoint2dRaw(), 5);
         
         // green dot is smoothed gaze point
         ofSetColor(ofColor::green);
-        ofCircle(tet.getPoint2dAvg(), 10);
+        ofDrawCircle(tet.getPoint2dAvg(), 10);
         
         // when fixated is show orenge circle
         if (tet.isFix())
         {
             ofSetColor(ofColor::orange, 100);
-            ofCircle(tet.getPoint2dAvg(), 40);
+            ofDrawCircle(tet.getPoint2dAvg(), 40);
         }
         
         // and draw data from each eyes
         ofNoFill();
         ofSetColor(ofColor::aqua);
-        ofCircle(tet.getLeftEyeRaw(), 5);
-        ofCircle(tet.getRightEyeRaw(), 5);
+        ofDrawCircle(tet.getLeftEyeRaw(), 5);
+        ofDrawCircle(tet.getRightEyeRaw(), 5);
         
         ofSetColor(ofColor::purple);
-        ofCircle(tet.getLeftEyeAvg(), 5);
-        ofCircle(tet.getRightEyeAvg(), 5);
+        ofDrawCircle(tet.getLeftEyeAvg(), 5);
+        ofDrawCircle(tet.getRightEyeAvg(), 5);
         
         ofSetColor(ofColor::yellow);
-        ofCircle(tet.getLeftEyePcenter().x * ofGetWidth(), tet.getLeftEyePcenter().y * ofGetHeight(), 20);
-        ofCircle(tet.getRightEyePcenter().x * ofGetWidth(), tet.getRightEyePcenter().y * ofGetHeight(), 20);
+        ofDrawCircle(tet.getLeftEyePcenter().x * ofGetWidth(), tet.getLeftEyePcenter().y * ofGetHeight(), 20);
+        ofDrawCircle(tet.getRightEyePcenter().x * ofGetWidth(), tet.getRightEyePcenter().y * ofGetHeight(), 20);
         
         
         
@@ -132,7 +132,7 @@ void testApp::draw()
 
 }
 
-void testApp::keyPressed(int key)
+void ofApp::keyPressed(int key)
 {
     if (key == 'f') ofToggleFullscreen();
     if (key == 'o') tet.open();

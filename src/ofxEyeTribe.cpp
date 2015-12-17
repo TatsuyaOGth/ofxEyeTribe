@@ -476,7 +476,7 @@ void ofxEyeTribe::drawCalibration()
         ofSetColor(255, 255, 255);
         const ofPoint& p = mCalibPoints[mCurrentCalibIndex];
         float size = ElasticEaseIn(timeInterp) * (mCalibPointSize * 1.5) + mCalibPointSize;
-        ofCircle(p, size);
+        ofDrawCircle(p, size);
     }
     
     if (mCalibState == CALIB_POINT)
@@ -485,7 +485,7 @@ void ofxEyeTribe::drawCalibration()
         ofSetColor(255, 255, 255);
         const ofPoint& p = mCalibPoints[mCurrentCalibIndex];
         float size = QuintEaseIn(timeInterp) * mCalibPointSize;
-        ofCircle(p, size);
+        ofDrawCircle(p, size);
     }
     
     if (mCalibState == CALIB_STAND_BY)
@@ -495,10 +495,10 @@ void ofxEyeTribe::drawCalibration()
         {
             ofFill();
             ofSetColor(ofColor::blue);
-            ofCircle(e.cp.x, e.cp.y, 5);
+            ofDrawCircle(e.cp.x, e.cp.y, 5);
             ofNoFill();
             ofSetColor(ofColor::skyBlue);
-            ofCircle(e.mecp.x, e.mecp.y, 5);
+            ofDrawCircle(e.mecp.x, e.mecp.y, 5);
         }
     }
     
