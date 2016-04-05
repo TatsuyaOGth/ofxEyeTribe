@@ -43,23 +43,13 @@ protected:
     gtl::Screen     mScreen;
     gtl::CalibResult mCalibResult;
     bool            mfAutoUpdate;
-
-    // calibration
-    vector<ofPoint> mCalibPoints;
-    int             mCurrentCalibIndex;
     bool            mfCalibrating;
-    float           mTick;
-    float           mDuration;
-    enum            { CALIB_STAND_BY, CALIB_START, CALIB_FOLLOW_POINT, CALIB_POINT };
-    int             mCalibState;
-    float           mCalibFollowPointTime;
-    float           mCalibPointSize;
-    
+    double          mCalibrationProgress;
+
 protected:
     ofPoint         point2dToOfVec2d(const gtl::Point2D point2d);
     void            normalize(gtl::Point2D & point2d);
     void            onUpdate(ofEventArgs &e);
-    void            updateCalibrationProcess();
     
 public:
     ofxEyeTribe(bool autoUpdate = true);
@@ -96,11 +86,6 @@ public:
      *  Remove update listener
      */
     void            removeUpdateListener();
-    
-    /**
-     *  Draw calibration view
-     */
-    void            drawCalibration();
     
     
     
@@ -179,6 +164,9 @@ public:
     /** was the calibration successful? @return succeed is true */
     bool            isCalibrationSucceed();
     
+    /** get calibration progress @return calibration progress value */
+    double          getCalibrationProgress();
+    
     
     
     /** get a api's object includ server state values @return struct gtl::ServerState */
@@ -229,24 +217,5 @@ public:
      * \sa calibrationPointStart(const int x, const int y).
      */
     void calibrationPointEnd();
-    
-    
-    /**
-     *  Begin easily calibration process (process automatically), you have to call update() and drawCalibration().
-     *  IF you want abort calibration, call stopCalibrationProcess.
-     *
-     *  @param numCalibrationPoints The number of points to use for calibration. (only 9/12/16)
-     *  @param followPointTime Time (sec.) to following for each calibration point (minimum = 1.0)
-     *  @param calibPointSize Size (pixel) of each calibration point.
-     *  @return indication of the request processed okay.
-     *  @sa drawCalibration, stopCalibrationProcess
-     */
-    bool startCalibrationProcess(const int numCalibrationPoints = 9, const float followPointTime = 1.5, const float calibPointSize = 25.0);
-    
-    /**
-     *  Stop calibration process.
-     *  @sa startCalibrationProcess.
-     */
-    void stopCalibrationProcess();
 };
 

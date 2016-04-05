@@ -1,5 +1,38 @@
 #include "testApp.h"
 
+static float QuintEaseIn(const float t)
+{
+    return t * t * t * t * t;
+}
+
+static float QuintEaseOut(const float t)
+{
+    return 1. - QuintEaseIn(1. - t);
+}
+
+static float ElasticEaseOut(const float t)
+{
+    float s = 1 - t;
+    return 1 - powf(s, 8) + sinf(t * t * 6 * PI) * s * s;
+}
+
+static float ElasticEaseIn(const float t)
+{
+    return 1.0 - ElasticEaseOut(1.0 - t);
+}
+
+static float min(float v1, float v2)
+{
+    if (v1 > v2)
+        return v2;
+    else
+        return v1;
+}
+
+static const float CALIB_POINT_TIME = 0.5;
+
+
+
 void testApp::setup()
 {
     ofSetFrameRate(60);
@@ -7,6 +40,63 @@ void testApp::setup()
     
     tet.open();
     // tet.open(6555); //<---- if you want change device port
+    
+    mCalibState = CALIB_STAND_BY;
+}
+
+void testApp::update()
+{
+    if (mCalibState != CALIB_STAND_BY)
+    {
+        if (mCalibState == CALIB_START)
+        {
+            if (mTick > mDuration)
+            {
+                mTick = 0;
+                mDuration = mCalibFollowPointTime - CALIB_POINT_TIME;
+                mCalibState = CALIB_FOLLOW_POINT;
+                // -> goto next state
+            }
+        }
+        
+        if (mCalibState == CALIB_FOLLOW_POINT)
+        {
+            if (mTick > mDuration)
+            {
+                mTick = 0;
+                mDuration = 0.5;
+                mCalibState = CALIB_POINT;
+                // begin new calib pts
+                tet.calibrationPointStart(mCalibPoints[mCurrentCalibIndex]);
+                // -> goto next state
+            }
+        }
+        
+        if (mCalibState == CALIB_POINT)
+        {
+            if (mTick > mDuration)
+            {
+                // end current calib pts
+                tet.calibrationPointEnd();
+                
+                mCurrentCalibIndex++;
+                
+                if (mCurrentCalibIndex == mCalibPoints.size())
+                {
+                    mCalibState = CALIB_STAND_BY;
+                    // -> goto end
+                }
+                else {
+                    mCalibState = CALIB_FOLLOW_POINT;
+                    mDuration = 1.0;
+                    // -> back to previous state
+                }
+                mTick = 0;
+            }
+        }
+        
+        mTick += ofGetLastFrameTime();
+    }
 }
 
 void testApp::draw()
@@ -31,7 +121,53 @@ void testApp::draw()
         
     // draw calibration view (calibration process/calibration result)
     //-----------------------------------------------------------------------------
-    tet.drawCalibration();
+    ofPushStyle();
+    ofEnableAlphaBlending();
+    ofSetRectMode(OF_RECTMODE_CORNER);
+    ofSetCircleResolution(90);
+    
+    const int width  = tet.getScreen().screenresw;
+    const int height = tet.getScreen().screenresh;
+    const float timeInterp = ofClamp(1.0 - (mTick / mDuration), 0.0, 1.0);
+    
+    if (mCalibState == CALIB_START)
+    {
+        unsigned char a = QuintEaseOut(timeInterp) * 255;
+        ofDrawBitmapStringHighlight("FOLLOW THE CIRCLE", width / 2 - 70, height / 2, ofColor(0, a), ofColor(255, a));
+    }
+    
+    if (mCalibState == CALIB_FOLLOW_POINT)
+    {
+        ofFill();
+        ofSetColor(255, 255, 255);
+        const ofPoint& p = mCalibPoints[mCurrentCalibIndex];
+        float size = ElasticEaseIn(timeInterp) * (mCalibPointSize * 1.5) + mCalibPointSize;
+        ofCircle(p, size);
+    }
+    
+    if (mCalibState == CALIB_POINT)
+    {
+        ofFill();
+        ofSetColor(255, 255, 255);
+        const ofPoint& p = mCalibPoints[mCurrentCalibIndex];
+        float size = QuintEaseIn(timeInterp) * mCalibPointSize;
+        ofCircle(p, size);
+    }
+    
+    if (mCalibState == CALIB_STAND_BY)
+    {
+        ofFill();
+        for (const auto& e : tet.getCalibResult().calibpoints)
+        {
+            ofFill();
+            ofSetColor(ofColor::blue);
+            ofCircle(e.cp.x, e.cp.y, 5);
+            ofNoFill();
+            ofSetColor(ofColor::skyBlue);
+            ofCircle(e.mecp.x, e.mecp.y, 5);
+        }
+    }
+    ofPopStyle();
 
     
     
@@ -139,20 +275,67 @@ void testApp::keyPressed(int key)
     if (key == 'c') tet.close();
     if (key == 's') tet.startServer();
     
+    // Calibration start/aboot
     if (key == ' ')
     {
         if (tet.isCalibrating())
         {
-            tet.stopCalibrationProcess();
+            stopCalibrationProcess();
         }
         else {
-            bool calibration = tet.startCalibrationProcess();
-            
-            if (calibration)
-                ofLogNotice("ofxEyeTribe", "start calibration process");
-            else
-                ofLogError("ofxEyeTribe", "calibration does not started");
+            startCalibrationSequence(9, 1.5, 25);
         }
     }
 }
 
+
+void testApp::startCalibrationSequence(const int numCalibrationPoints, const float followPointTime, const float calibPointSize)
+{
+    bool bCalibStartSuccess = tet.calibrationStart(numCalibrationPoints);
+    
+    if (bCalibStartSuccess)
+    {
+        mCalibPoints.clear();
+        int nx = 0;
+        int ny = 0;
+        switch (numCalibrationPoints)
+        {
+            case 9  : nx = 3; ny = 3; break;
+            case 12 : nx = 4; ny = 3; break;
+            case 16 : nx = 4; ny = 4; break;
+            default : ofLogError("ofxEyeTribe", "illegal number of points"); return false;
+        }
+        const int width = tet.getScreen().screenresw;
+        const int height = tet.getScreen().screenresh;
+        
+        for (int i = 0; i < ny; ++i)
+        {
+            for (int j = 0; j < nx; ++j)
+            {
+                float x = width / (nx * 2) * (j * 2 + 1);
+                float y = height / (ny * 2) * (i * 2 + 1);
+                mCalibPoints.push_back(ofPoint(x, y));
+            }
+        }
+        mCurrentCalibIndex = 0;
+        mCalibPointSize = calibPointSize;
+        mCalibFollowPointTime = followPointTime;
+        if (mCalibFollowPointTime < CALIB_POINT_TIME * 2)
+        {
+            ofLogWarning("ofxEyeTribe", "follow point time must more than " + ofToString(CALIB_POINT_TIME * 2));
+            mCalibFollowPointTime = CALIB_POINT_TIME * 2;
+        }
+        mCalibState = CALIB_START;
+        mTick = 0;
+        mDuration = 3.0; // calibration stand-by time
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+void testApp::stopCalibrationProcess()
+{
+    tet.calibrationAbort();
+}
