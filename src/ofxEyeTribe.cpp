@@ -88,7 +88,7 @@ bool ofxEyeTribe::open(unsigned short port)
         ofLogNotice("ofxEyeTribe", "is already connected");
         return true;
     }
-    if (api.connect(false, port)) // always pull-mode
+    if (api.connect(port))
     {
         ofLogNotice("ofxEyeTribe", "connecte - port(" + ofToString(port) + ")");
         return true;

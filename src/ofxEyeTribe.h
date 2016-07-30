@@ -26,7 +26,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include <include/gazeapi.h>
+#include "gazeapi.h"
 
 
 class ofxEyeTribe : public gtl::ICalibrationProcessHandler

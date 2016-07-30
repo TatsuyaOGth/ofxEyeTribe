@@ -38,3 +38,7 @@
 *.opensdf
 *.png
 *.jpg
+
+#example
+example/config.make
+example/Makefile
