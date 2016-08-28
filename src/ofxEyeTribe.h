@@ -43,23 +43,11 @@ protected:
     gtl::Screen     mScreen;
     gtl::CalibResult mCalibResult;
     bool            mfAutoUpdate;
-
-    // calibration
-    vector<ofPoint> mCalibPoints;
-    int             mCurrentCalibIndex;
-    bool            mfCalibrating;
-    float           mTick;
-    float           mDuration;
-    enum            { CALIB_STAND_BY, CALIB_START, CALIB_FOLLOW_POINT, CALIB_POINT };
-    int             mCalibState;
-    float           mCalibFollowPointTime;
-    float           mCalibPointSize;
     
 protected:
     ofPoint         point2dToOfVec2d(const gtl::Point2D point2d);
     void            normalize(gtl::Point2D & point2d);
     void            onUpdate(ofEventArgs &e);
-    void            updateCalibrationProcess();
     
 public:
     ofxEyeTribe(bool autoUpdate = true);
@@ -68,7 +56,7 @@ public:
     string          startServer();
     
     /**
-     *  Open port
+     *  Open port. NOTE: you have to start The EYE TRIBE TRACKER Server befor then.
      *
      *  @param port number of port
      *  @return bool (if faled this process than return false)
@@ -96,11 +84,6 @@ public:
      *  Remove update listener
      */
     void            removeUpdateListener();
-    
-    /**
-     *  Draw calibration view
-     */
-    void            drawCalibration();
     
     
     
@@ -147,7 +130,6 @@ public:
     ofPoint         getLeftEyePcenter();
     
     
-    
     /** raw gaze coordinates in pixels @return ofVec2d */
     ofPoint         getRightEyeRaw();
     
@@ -169,12 +151,6 @@ public:
     
     /** check connection @return bool */
     bool            isConnected();
-    
-    /** check frame new @return bool */
-    OF_DEPRECATED_MSG("ofxEyeTribe::isFrameNew() was deprecated from ver.0.4, now this is allways return true.", bool isFrameNew());
-    
-    /** is now calibrating? @return bool */
-    bool            isCalibrating();
     
     /** was the calibration successful? @return succeed is true */
     bool            isCalibrationSucceed();
@@ -231,22 +207,22 @@ public:
     void calibrationPointEnd();
     
     
-    /**
-     *  Begin easily calibration process (process automatically), you have to call update() and drawCalibration().
-     *  IF you want abort calibration, call stopCalibrationProcess.
-     *
-     *  @param numCalibrationPoints The number of points to use for calibration. (only 9/12/16)
-     *  @param followPointTime Time (sec.) to following for each calibration point (minimum = 1.0)
-     *  @param calibPointSize Size (pixel) of each calibration point.
-     *  @return indication of the request processed okay.
-     *  @sa drawCalibration, stopCalibrationProcess
-     */
-    bool startCalibrationProcess(const int numCalibrationPoints = 9, const float followPointTime = 1.5, const float calibPointSize = 25.0);
     
-    /**
-     *  Stop calibration process.
-     *  @sa startCalibrationProcess.
+    // legacy
+    
+    /*
+     NOTE:  Sorry, the functions for easy calibration functions "startCalibrationProcess" and "stopCalibrationProcess" were removed from version 0.5.
+     That functions ware moved to example code. please see ofxEyeTribe/example, and try make your methods and animations for calibration sequence.
      */
-    void stopCalibrationProcess();
+    OF_DEPRECATED_MSG("NOTE: The functions for easy calibration functions \"startCalibrationProcess\" and \"stopCalibrationProcess\" were removed from version 0.5. That functions ware moved to example code. please see ofxEyeTribe/example, and try make your methods and animations for calibration sequence.", bool startCalibrationProcess(const int numCalibrationPoints = 9, const float followPointTime = 1.5, const float calibPointSize = 25.0));
+    
+    OF_DEPRECATED_MSG("NOTE: The functions for easy calibration functions \"startCalibrationProcess\" and \"stopCalibrationProcess\" were removed from version 0.5. That functions ware moved to example code. please see ofxEyeTribe/example, and try make your methods and animations for calibration sequence.", bool stopCalibrationProcess());
+    
+    
+    /** check frame new @return bool */
+    OF_DEPRECATED_MSG("ofxEyeTribe::isFrameNew() was deprecated from ver.0.4, this always return true.", bool isFrameNew());
+    
+    /** is now calibrating? @return bool */
+    OF_DEPRECATED_MSG("ofxEyeTribe::isCalibrating() was deleted from ver.0.5, this always return true.", bool isCalibrating());
 };
 

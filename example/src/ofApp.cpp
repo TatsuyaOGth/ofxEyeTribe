@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include <random>
 
 // save compatibility
 #if OF_VERSION_MINOR <= 8
@@ -11,10 +12,26 @@
 void ofApp::setup()
 {
     ofSetFrameRate(60);
-    ofSetCircleResolution(45);
     
+    // open port.
+    // NOTE: you have to start The EYE TRIBE TRACKER Server befor call open.
     tet.open();
-    // tet.open(6555); //<---- if you want change device port
+    //tet.open(6555); //<---- if you want change device port
+    
+    /*
+     API need your screen information, especially for calibration.
+     please put in values of your screen parameters: screen index, resolution width/height in pixels, and phisical width/height in meters.
+     This parameters can setting even from "EyeTribe UI". If you have already set the parameters via "EyeTrive UI", you do not need call this.
+     */
+    //tet.setScreen(0, ofGetScreenWidth(), ofGetScreenHeight(), 35.89, 24.71);
+}
+
+void ofApp::update()
+{
+    if (mfCalibrating)
+    {
+        updateCalibration();
+    }
 }
 
 void ofApp::draw()
@@ -23,19 +40,22 @@ void ofApp::draw()
     
     // draw background
     //-----------------------------------------------------------------------------
-    ofBackgroundGradient(ofColor(150), ofColor(30));
+    ofBackgroundGradient(ofColor(90), ofColor(0));
     ofDisableAntiAliasing();
     ofSetColor(0, 0, 0);
 
-        
-    // draw calibration view (calibration process/calibration result)
-    //-----------------------------------------------------------------------------
-    tet.drawCalibration();
 
     
-    
-    if (tet.isCalibrating() == false)
+    if (mfCalibrating)
     {
+        
+        // draw calibration view (calibration process/calibration result)
+        //-----------------------------------------------------------------------------
+        drawCalibration();
+        
+    }
+    else {
+        
         // draw gaze data
         //-----------------------------------------------------------------------------
         ofFill();
@@ -138,18 +158,237 @@ void ofApp::keyPressed(int key)
     
     if (key == ' ')
     {
-        if (tet.isCalibrating())
+        if (mfCalibrating)
         {
-            tet.stopCalibrationProcess();
+            stopCalibrationSequence();
         }
         else {
-            bool calibration = tet.startCalibrationProcess();
+            bool calibration = startCalibrationSequence(9, 1.0, 2.0, 25.0, true);
             
             if (calibration)
-                ofLogNotice("ofxEyeTribe", "start calibration process");
+                ofLogNotice("ofxEyeTribe", "start calibration sequence");
             else
-                ofLogError("ofxEyeTribe", "calibration does not started");
+                ofLogError("ofxEyeTribe", "calibration could not start");
         }
     }
 }
 
+
+
+
+//------------------------------------------------------------------------------------------
+//                               Calibration Example
+//------------------------------------------------------------------------------------------
+
+static const float CALIB_STAND_BY_TIME  = 3.0;
+
+
+static float QuintEaseIn(const float t)
+{
+    return t * t * t * t * t;
+}
+
+static float QuintEaseOut(const float t)
+{
+    return 1. - QuintEaseIn(1. - t);
+}
+
+static float ElasticEaseOut(const float t)
+{
+    float s = 1 - t;
+    return 1 - powf(s, 8) + sinf(t * t * 6 * PI) * s * s;
+}
+
+static float ElasticEaseIn(const float t)
+{
+    return 1.0 - ElasticEaseOut(1.0 - t);
+}
+
+bool ofApp::startCalibrationSequence(const int numCalibrationPoints,
+                                     const float calibPointTime,
+                                     const float followPointTime,
+                                     const float calibPointSize,
+                                     bool random)
+{
+    // start calibration
+    bool calibrating = tet.calibrationStart(numCalibrationPoints);
+    
+    if (calibrating)
+    {
+        // initialize
+        mCalibPoints.clear();
+        mCurrentCalibIndex = 0;
+        
+        // get screen size from api, if you dont set yet? see setup()
+        const int width = tet.getScreen().screenresw;
+        const int height = tet.getScreen().screenresh;
+        
+        // set calibration points
+        int nx = 0;
+        int ny = 0;
+        switch (numCalibrationPoints)
+        {
+            case 9  : nx = 3; ny = 3; break;
+            case 12 : nx = 4; ny = 3; break;
+            case 16 : nx = 4; ny = 4; break;
+            default : ofLogError("ofxEyeTribe", "illegal number of points"); return false;
+        }
+        for (int i = 0; i < ny; ++i)
+        {
+            for (int j = 0; j < nx; ++j)
+            {
+                float x = width / (nx * 2) * (j * 2 + 1);
+                float y = height / (ny * 2) * (i * 2 + 1);
+                mCalibPoints.push_back(ofPoint(x, y));
+            }
+        }
+        
+        // shuffle order of calibration points
+        if (random)
+        {
+            ofRandomize(mCalibPoints);
+        }
+        
+        // set animation parameters
+        mCalibPointSize = abs(calibPointSize);
+        mCalibPointTime = abs(calibPointTime);
+        mCalibFollowPointTime = followPointTime;
+        if (mCalibFollowPointTime < mCalibPointTime * 2)
+        {
+            ofLogWarning("ofxEyeTribe", "follow point time must more than " + ofToString(mCalibPointTime * 2));
+            mCalibFollowPointTime = mCalibPointTime * 2;
+        }
+        mCalibState = CALIB_START;
+        mTick = 0;
+        mDuration = CALIB_STAND_BY_TIME;
+        mfCalibrating = true;
+        return true;
+    }
+    else {
+        mfCalibrating = false;
+        return false;
+    }
+}
+
+void ofApp::stopCalibrationSequence()
+{
+    // calibration abort
+    tet.calibrationAbort();
+    mfCalibrating = false;
+    mCalibState = CALIB_STAND_BY;
+}
+
+void ofApp::updateCalibration()
+{
+    if (mfCalibrating)
+    {
+        // update animation
+        
+        if (mCalibState == CALIB_START)
+        {
+            if (mTick > mDuration)
+            {
+                mTick = 0;
+                mDuration = mCalibFollowPointTime - mCalibPointTime;
+                mCalibState = CALIB_FOLLOW_POINT;
+                // -> goto next state
+            }
+        }
+        
+        if (mCalibState == CALIB_FOLLOW_POINT)
+        {
+            if (mTick > mDuration)
+            {
+                mTick = 0;
+                mDuration = mCalibPointTime;
+                mCalibState = CALIB_POINT;
+                // begin new calib pts
+                tet.calibrationPointStart(mCalibPoints[mCurrentCalibIndex]);
+                // -> goto next state
+            }
+        }
+        
+        if (mCalibState == CALIB_POINT)
+        {
+            if (mTick > mDuration)
+            {
+                // end current calib pts
+                tet.calibrationPointEnd();
+                
+                mCurrentCalibIndex++;
+                
+                if (mCurrentCalibIndex == mCalibPoints.size())
+                {
+                    mCalibState = CALIB_STAND_BY;
+                    mfCalibrating = false;
+                    // -> goto end
+                }
+                else {
+                    mCalibState = CALIB_FOLLOW_POINT;
+                    mDuration = mCalibFollowPointTime - mCalibPointTime;
+                    // -> back to previous state
+                }
+                mTick = 0;
+            }
+        }
+        
+        // count up animation timeline
+        mTick += ofGetLastFrameTime();
+    }
+}
+
+void ofApp::drawCalibration()
+{
+    ofPushStyle();
+    ofEnableAlphaBlending();
+    ofEnableAntiAliasing();
+    ofSetRectMode(OF_RECTMODE_CORNER);
+    ofSetCircleResolution(90);
+    
+    // get screen size from api
+    const int width  = tet.getScreen().screenresw;
+    const int height = tet.getScreen().screenresh;
+    const float timeInterp = ofClamp(1.0 - (mTick / mDuration), 0.0, 1.0);
+    
+    // draw animation
+    
+    if (mCalibState == CALIB_START)
+    {
+        unsigned char a = QuintEaseOut(timeInterp) * 255;
+        ofDrawBitmapStringHighlight("FOLLOW THE CIRCLE", width / 2 - 70, height / 2, ofColor(0, a), ofColor(255, a));
+    }
+    
+    if (mCalibState == CALIB_FOLLOW_POINT)
+    {
+        ofFill();
+        ofSetColor(255, 255, 255);
+        const ofPoint& p = mCalibPoints[mCurrentCalibIndex];
+        float size = ElasticEaseIn(timeInterp) * (mCalibPointSize * 1.5) + mCalibPointSize;
+        ofDrawCircle(p, size);
+    }
+    
+    if (mCalibState == CALIB_POINT)
+    {
+        ofFill();
+        ofSetColor(255, 255, 255);
+        const ofPoint& p = mCalibPoints[mCurrentCalibIndex];
+        float size = QuintEaseIn(timeInterp) * mCalibPointSize;
+        ofDrawCircle(p, size);
+    }
+    
+    if (mCalibState == CALIB_STAND_BY)
+    {
+        ofFill();
+        for (const auto& e : tet.getCalibResult().calibpoints)
+        {
+            ofFill();
+            ofSetColor(ofColor::blue);
+            ofDrawCircle(e.cp.x, e.cp.y, 5);
+            ofNoFill();
+            ofSetColor(ofColor::skyBlue);
+            ofDrawCircle(e.mecp.x, e.mecp.y, 5);
+        }
+    }
+    
+    ofPopStyle();
+}

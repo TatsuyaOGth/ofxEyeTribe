@@ -27,8 +27,6 @@
 
 ofxEyeTribe::ofxEyeTribe(bool autoUpdate)
 : mfAutoUpdate(autoUpdate)
-, mfCalibrating(false)
-, mCalibState(CALIB_STAND_BY)
 {
     if (mfAutoUpdate)
     {
@@ -110,10 +108,6 @@ void ofxEyeTribe::update()
 {
     if (api.is_connected())
     {
-        if (mCalibState != CALIB_STAND_BY)
-        {
-            updateCalibrationProcess();
-        }
         api.get_frame(mGazeData);
         api.get_screen(mScreen);
         api.get_calib_result(mCalibResult);
@@ -224,16 +218,6 @@ bool ofxEyeTribe::isConnected()
     return api.is_connected();
 }
 
-bool ofxEyeTribe::isFrameNew()
-{
-    return true;
-}
-
-bool ofxEyeTribe::isCalibrating()
-{
-    return mfCalibrating;
-}
-
 bool ofxEyeTribe::isCalibrationSucceed()
 {
     return mCalibResult.result;
@@ -264,40 +248,6 @@ gtl::CalibResult const & ofxEyeTribe::getCalibResult()
 //                                  calibration
 //------------------------------------------------------------------------------------------
 
-static const float CALIB_STAND_BY_TIME  = 3.0;
-static const float CALIB_POINT_TIME     = 0.5;
-
-
-static float QuintEaseIn(const float t)
-{
-    return t * t * t * t * t;
-}
-
-static float QuintEaseOut(const float t)
-{
-    return 1. - QuintEaseIn(1. - t);
-}
-
-static float ElasticEaseOut(const float t)
-{
-    float s = 1 - t;
-    return 1 - powf(s, 8) + sinf(t * t * 6 * PI) * s * s;
-}
-
-static float ElasticEaseIn(const float t)
-{
-    return 1.0 - ElasticEaseOut(1.0 - t);
-}
-
-static float min(float v1, float v2)
-{
-    if (v1 > v2)
-        return v2;
-    else
-        return v1;
-}
-
-
 bool ofxEyeTribe::calibrationStart(const int numCalibrationPoints)
 {
     if (numCalibrationPoints == 9 || numCalibrationPoints == 12 || numCalibrationPoints == 16)
@@ -311,7 +261,6 @@ bool ofxEyeTribe::calibrationStart(const int numCalibrationPoints)
         }
         
         bool res = api.calibration_start(numCalibrationPoints);
-        mfCalibrating = res;
         return res;
     }
     
@@ -322,17 +271,11 @@ bool ofxEyeTribe::calibrationStart(const int numCalibrationPoints)
 void ofxEyeTribe::calibrationAbort()
 {
     api.calibration_abort();
-    mfCalibrating = false;
-    mCalibState = CALIB_STAND_BY;
 }
 
 void ofxEyeTribe::calibrationPointStart(const int x, const int y)
 {
-    if (mfCalibrating)
-    {
-        api.calibration_point_start(x, y);
-    }
-    else ofLogError("ofxEyeTribe", "calibration session has not began");
+    api.calibration_point_start(x, y);
 }
 
 void ofxEyeTribe::calibrationPointStart(const ofPoint &p)
@@ -342,179 +285,22 @@ void ofxEyeTribe::calibrationPointStart(const ofPoint &p)
 
 void ofxEyeTribe::calibrationPointEnd()
 {
-    if (mfCalibrating)
-    {
-        api.calibration_point_end();
-    }
-    else ofLogError("ofxEyeTribe", "calibration session has not began");
-}
-
-bool ofxEyeTribe::startCalibrationProcess(const int numCalibrationPoints, const float followPointTime, const float calibPointSize)
-{
-    bool bCalibStartSuccess = calibrationStart(numCalibrationPoints);
-    
-    if (bCalibStartSuccess)
-    {
-        mCalibPoints.clear();
-        int nx = 0;
-        int ny = 0;
-        switch (numCalibrationPoints)
-        {
-            case 9  : nx = 3; ny = 3; break;
-            case 12 : nx = 4; ny = 3; break;
-            case 16 : nx = 4; ny = 4; break;
-            default : ofLogError("ofxEyeTribe", "illegal number of points"); return false;
-        }
-        const int width = mScreen.screenresw;
-        const int height = mScreen.screenresh;
-        
-        for (int i = 0; i < ny; ++i)
-        {
-            for (int j = 0; j < nx; ++j)
-            {
-                float x = width / (nx * 2) * (j * 2 + 1);
-                float y = height / (ny * 2) * (i * 2 + 1);
-                mCalibPoints.push_back(ofPoint(x, y));
-            }
-        }
-        mCurrentCalibIndex = 0;
-        mCalibPointSize = calibPointSize;
-        mCalibFollowPointTime = followPointTime;
-        if (mCalibFollowPointTime < CALIB_POINT_TIME * 2)
-        {
-            ofLogWarning("ofxEyeTribe", "follow point time must more than " + ofToString(CALIB_POINT_TIME * 2));
-            mCalibFollowPointTime = CALIB_POINT_TIME * 2;
-        }
-        mCalibState = CALIB_START;
-        mTick = 0;
-        mDuration = CALIB_STAND_BY_TIME;
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
-void ofxEyeTribe::stopCalibrationProcess()
-{
-    calibrationAbort();
-}
-
-void ofxEyeTribe::updateCalibrationProcess()
-{
-    if (mCalibState == CALIB_START)
-    {
-        if (mTick > mDuration)
-        {
-            mTick = 0;
-            mDuration = mCalibFollowPointTime - CALIB_POINT_TIME;
-            mCalibState = CALIB_FOLLOW_POINT;
-            // -> goto next state
-        }
-    }
-    
-    if (mCalibState == CALIB_FOLLOW_POINT)
-    {
-        if (mTick > mDuration)
-        {
-            mTick = 0;
-            mDuration = 0.5;
-            mCalibState = CALIB_POINT;
-            // begin new calib pts
-            calibrationPointStart(mCalibPoints[mCurrentCalibIndex]);
-            // -> goto next state
-        }
-    }
-    
-    if (mCalibState == CALIB_POINT)
-    {
-        if (mTick > mDuration)
-        {
-            // end current calib pts
-            calibrationPointEnd();
-            
-            mCurrentCalibIndex++;
-            
-            if (mCurrentCalibIndex == mCalibPoints.size())
-            {
-                mCalibState = CALIB_STAND_BY;
-                mfCalibrating = false;
-                // -> goto end
-            }
-            else {
-                mCalibState = CALIB_FOLLOW_POINT;
-                mDuration = 1.0;
-                // -> back to previous state
-            }
-            mTick = 0;
-        }
-    }
-    
-    mTick += ofGetLastFrameTime();
-}
-
-void ofxEyeTribe::drawCalibration()
-{
-    ofPushStyle();
-    ofEnableAlphaBlending();
-    ofSetRectMode(OF_RECTMODE_CORNER);
-    ofSetCircleResolution(90);
-    
-    const int width  = mScreen.screenresw;
-    const int height = mScreen.screenresh;
-    const float timeInterp = ofClamp(1.0 - (mTick / mDuration), 0.0, 1.0);
-    
-    if (mCalibState == CALIB_START)
-    {
-        unsigned char a = QuintEaseOut(timeInterp) * 255;
-        ofDrawBitmapStringHighlight("FOLLOW THE CIRCLE", width / 2 - 70, height / 2, ofColor(0, a), ofColor(255, a));
-    }
-    
-    if (mCalibState == CALIB_FOLLOW_POINT)
-    {
-        ofFill();
-        ofSetColor(255, 255, 255);
-        const ofPoint& p = mCalibPoints[mCurrentCalibIndex];
-        float size = ElasticEaseIn(timeInterp) * (mCalibPointSize * 1.5) + mCalibPointSize;
-        ofCircle(p, size);
-    }
-    
-    if (mCalibState == CALIB_POINT)
-    {
-        ofFill();
-        ofSetColor(255, 255, 255);
-        const ofPoint& p = mCalibPoints[mCurrentCalibIndex];
-        float size = QuintEaseIn(timeInterp) * mCalibPointSize;
-        ofCircle(p, size);
-    }
-    
-    if (mCalibState == CALIB_STAND_BY)
-    {
-        ofFill();
-        for (const auto& e : mCalibResult.calibpoints)
-        {
-            ofFill();
-            ofSetColor(ofColor::blue);
-            ofCircle(e.cp.x, e.cp.y, 5);
-            ofNoFill();
-            ofSetColor(ofColor::skyBlue);
-            ofCircle(e.mecp.x, e.mecp.y, 5);
-        }
-    }
-    
-    ofPopStyle();
+    api.calibration_point_end();
 }
 
 void ofxEyeTribe::on_calibration_started()
 {
+    // event not used
 }
 
 void ofxEyeTribe::on_calibration_processing()
 {
+    // event not used
 }
 
 void ofxEyeTribe::on_calibration_progress(double progress)
 {
+    // event not used
 }
 
 void ofxEyeTribe::on_calibration_result(bool is_calibrated, const gtl::CalibResult &calib_result)
@@ -527,5 +313,30 @@ void ofxEyeTribe::on_calibration_result(bool is_calibrated, const gtl::CalibResu
         ofLogWarning("ofxEyeTribe", "calibrate failed");
     }
     mCalibResult = calib_result;
-    mfCalibrating = false;
+}
+
+
+
+// legacy
+
+bool ofxEyeTribe::startCalibrationProcess(const int numCalibrationPoints, const float followPointTime, const float calibPointSize)
+{
+    ofLogError("ofxEyeTribe", "NOTE: Sorry, the functions for easy calibration functions \"startCalibrationProcess\" and \"stopCalibrationProcess\" were removed from version 0.5. That functions ware moved to example code. please see ofxEyeTribe/example, and try make your methods and animations for calibration sequence.");
+    return false;
+}
+
+bool ofxEyeTribe::stopCalibrationProcess()
+{
+    ofLogError("ofxEyeTribe", "NOTE: Sorry, the functions for easy calibration functions \"startCalibrationProcess\" and \"stopCalibrationProcess\" were removed from version 0.5. That functions ware moved to example code. please see ofxEyeTribe/example, and try make your methods and animations for calibration sequence.");
+    return false;
+}
+
+bool ofxEyeTribe::isFrameNew()
+{
+    return true;
+}
+
+bool ofxEyeTribe::isCalibrating()
+{
+    return true;
 }
