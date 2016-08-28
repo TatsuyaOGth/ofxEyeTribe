@@ -26,7 +26,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include <include/gazeapi.h>
+#include "gazeapi.h"
 
 
 class ofxEyeTribe : public gtl::ICalibrationProcessHandler
@@ -43,7 +43,6 @@ protected:
     gtl::Screen     mScreen;
     gtl::CalibResult mCalibResult;
     bool            mfAutoUpdate;
-    bool            mfCalibrating;
     double          mCalibrationProgress;
 
 protected:
@@ -58,7 +57,7 @@ public:
     string          startServer();
     
     /**
-     *  Open port
+     *  Open port. NOTE: you have to start The EYE TRIBE TRACKER Server befor then.
      *
      *  @param port number of port
      *  @return bool (if faled this process than return false)
@@ -132,7 +131,6 @@ public:
     ofPoint         getLeftEyePcenter();
     
     
-    
     /** raw gaze coordinates in pixels @return ofVec2d */
     ofPoint         getRightEyeRaw();
     
@@ -154,12 +152,6 @@ public:
     
     /** check connection @return bool */
     bool            isConnected();
-    
-    /** check frame new @return bool */
-    OF_DEPRECATED_MSG("ofxEyeTribe::isFrameNew() was deprecated from ver.0.4, now this is allways return true.", bool isFrameNew());
-    
-    /** is now calibrating? @return bool */
-    bool            isCalibrating();
     
     /** was the calibration successful? @return succeed is true */
     bool            isCalibrationSucceed();
@@ -217,5 +209,25 @@ public:
      * \sa calibrationPointStart(const int x, const int y).
      */
     void calibrationPointEnd();
+
+    
+    
+    
+    // legacy
+    
+    /*
+     NOTE:  Sorry, the functions for easy calibration functions "startCalibrationProcess" and "stopCalibrationProcess" were removed from version 0.5.
+     That functions ware moved to example code. please see ofxEyeTribe/example, and try make your methods and animations for calibration sequence.
+     */
+    OF_DEPRECATED_MSG("NOTE: The functions for easy calibration functions \"startCalibrationProcess\" and \"stopCalibrationProcess\" were removed from version 0.5. That functions ware moved to example code. please see ofxEyeTribe/example, and try make your methods and animations for calibration sequence.", bool startCalibrationProcess(const int numCalibrationPoints = 9, const float followPointTime = 1.5, const float calibPointSize = 25.0));
+    
+    OF_DEPRECATED_MSG("NOTE: The functions for easy calibration functions \"startCalibrationProcess\" and \"stopCalibrationProcess\" were removed from version 0.5. That functions ware moved to example code. please see ofxEyeTribe/example, and try make your methods and animations for calibration sequence.", bool stopCalibrationProcess());
+    
+    
+    /** check frame new @return bool */
+    OF_DEPRECATED_MSG("ofxEyeTribe::isFrameNew() was deprecated from ver.0.4, this always return true.", bool isFrameNew());
+    
+    /** is now calibrating? @return bool */
+    OF_DEPRECATED_MSG("ofxEyeTribe::isCalibrating() was deleted from ver.0.5, this always return true.", bool isCalibrating());
 };
 

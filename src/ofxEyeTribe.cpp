@@ -27,8 +27,6 @@
 
 ofxEyeTribe::ofxEyeTribe(bool autoUpdate)
 : mfAutoUpdate(autoUpdate)
-, mfCalibrating(false)
-, mCalibrationProgress(0)
 {
     if (mfAutoUpdate)
     {
@@ -88,7 +86,7 @@ bool ofxEyeTribe::open(unsigned short port)
         ofLogNotice("ofxEyeTribe", "is already connected");
         return true;
     }
-    if (api.connect(false, port)) // always pull-mode
+    if (api.connect(port))
     {
         ofLogNotice("ofxEyeTribe", "connecte - port(" + ofToString(port) + ")");
         return true;
@@ -220,16 +218,6 @@ bool ofxEyeTribe::isConnected()
     return api.is_connected();
 }
 
-bool ofxEyeTribe::isFrameNew()
-{
-    return true;
-}
-
-bool ofxEyeTribe::isCalibrating()
-{
-    return mfCalibrating;
-}
-
 bool ofxEyeTribe::isCalibrationSucceed()
 {
     return mCalibResult.result;
@@ -269,8 +257,6 @@ bool ofxEyeTribe::calibrationStart(const int numCalibrationPoints)
 {
     if (numCalibrationPoints == 9 || numCalibrationPoints == 12 || numCalibrationPoints == 16)
     {
-        mfCalibrating = true;
-        
         api.calibration_clear();
         
         const gtl::ServerState& serverState = api.get_server_state();
@@ -279,34 +265,19 @@ bool ofxEyeTribe::calibrationStart(const int numCalibrationPoints)
             api.calibration_abort();
         }
         
-        if (api.is_connected())
-        {
-            return api.calibration_start(numCalibrationPoints);
-        }
-        else {
-            ofLogError("ofxEyeTribe", "can not start calibration becouse device has not been connected");
-            return false;
-        }
-    }
-    else {
-        ofLogError("ofxEyeTribe", "set which number of calibration points is 9, 12 or 16");
-        return false;
+        bool res = api.calibration_start(numCalibrationPoints);
+        return res;
     }
 }
 
 void ofxEyeTribe::calibrationAbort()
 {
     api.calibration_abort();
-    mfCalibrating = false;
 }
 
 void ofxEyeTribe::calibrationPointStart(const int x, const int y)
 {
-    if (mfCalibrating)
-    {
-        api.calibration_point_start(x, y);
-    }
-    else ofLogError("ofxEyeTribe", "calibration session has not began");
+    api.calibration_point_start(x, y);
 }
 
 void ofxEyeTribe::calibrationPointStart(const ofPoint &p)
@@ -316,19 +287,17 @@ void ofxEyeTribe::calibrationPointStart(const ofPoint &p)
 
 void ofxEyeTribe::calibrationPointEnd()
 {
-    if (mfCalibrating)
-    {
-        api.calibration_point_end();
-    }
-    else ofLogError("ofxEyeTribe", "calibration session has not began");
+    api.calibration_point_end();
 }
 
 void ofxEyeTribe::on_calibration_started()
 {
+    // event not used
 }
 
 void ofxEyeTribe::on_calibration_processing()
 {
+    // event not used
 }
 
 void ofxEyeTribe::on_calibration_progress(double progress)
@@ -346,5 +315,30 @@ void ofxEyeTribe::on_calibration_result(bool is_calibrated, const gtl::CalibResu
         ofLogWarning("ofxEyeTribe", "calibrate failed");
     }
     mCalibResult = calib_result;
-    mfCalibrating = false;
+}
+
+
+
+// legacy
+
+bool ofxEyeTribe::startCalibrationProcess(const int numCalibrationPoints, const float followPointTime, const float calibPointSize)
+{
+    ofLogError("ofxEyeTribe", "NOTE: Sorry, the functions for easy calibration functions \"startCalibrationProcess\" and \"stopCalibrationProcess\" were removed from version 0.5. That functions ware moved to example code. please see ofxEyeTribe/example, and try make your methods and animations for calibration sequence.");
+    return false;
+}
+
+bool ofxEyeTribe::stopCalibrationProcess()
+{
+    ofLogError("ofxEyeTribe", "NOTE: Sorry, the functions for easy calibration functions \"startCalibrationProcess\" and \"stopCalibrationProcess\" were removed from version 0.5. That functions ware moved to example code. please see ofxEyeTribe/example, and try make your methods and animations for calibration sequence.");
+    return false;
+}
+
+bool ofxEyeTribe::isFrameNew()
+{
+    return true;
+}
+
+bool ofxEyeTribe::isCalibrating()
+{
+    return true;
 }
