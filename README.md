@@ -61,12 +61,7 @@ You can checkout for each version. See Tags in master branch.
 
 # Demo
 
-Click image.
-
-<a href="https://vimeo.com/115662398">
-![image](./doc/image.png)
-</a>
-
+https://vimeo.com/115662398
 
 # Licensing
 
