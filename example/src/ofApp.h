@@ -66,7 +66,7 @@ public:
     
     /**
      *  Stop calibration sequence.
-     *  @sa startCalibrationProcess.
+     *  @sa startCalibrationSequence.
      */
     void stopCalibrationSequence();
     

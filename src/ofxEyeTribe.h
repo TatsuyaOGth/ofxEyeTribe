@@ -216,12 +216,12 @@ public:
     // legacy
     
     /*
-     NOTE:  Sorry, the functions for easy calibration functions "startCalibrationProcess" and "stopCalibrationProcess" were removed from version 0.5.
+     NOTE:  Sorry, the functions for easy calibration "startCalibrationProcess" and "stopCalibrationProcess" were removed from version 0.5.
      That functions ware moved to example code. please see ofxEyeTribe/example, and try make your methods and animations for calibration sequence.
      */
-    OF_DEPRECATED_MSG("NOTE: The functions for easy calibration functions \"startCalibrationProcess\" and \"stopCalibrationProcess\" were removed from version 0.5. That functions ware moved to example code. please see ofxEyeTribe/example, and try make your methods and animations for calibration sequence.", bool startCalibrationProcess(const int numCalibrationPoints = 9, const float followPointTime = 1.5, const float calibPointSize = 25.0));
+    OF_DEPRECATED_MSG("NOTE: The functions for easy calibration \"startCalibrationProcess\" and \"stopCalibrationProcess\" were removed from version 0.5. That functions ware moved to example code. please see ofxEyeTribe/example, and try make your methods and animations for calibration sequence.", bool startCalibrationProcess(const int numCalibrationPoints = 9, const float followPointTime = 1.5, const float calibPointSize = 25.0));
     
-    OF_DEPRECATED_MSG("NOTE: The functions for easy calibration functions \"startCalibrationProcess\" and \"stopCalibrationProcess\" were removed from version 0.5. That functions ware moved to example code. please see ofxEyeTribe/example, and try make your methods and animations for calibration sequence.", bool stopCalibrationProcess());
+    OF_DEPRECATED_MSG("NOTE: The functions for easy calibration \"startCalibrationProcess\" and \"stopCalibrationProcess\" were removed from version 0.5. That functions ware moved to example code. please see ofxEyeTribe/example, and try make your methods and animations for calibration sequence.", bool stopCalibrationProcess());
     
     
     /** check frame new @return bool */
