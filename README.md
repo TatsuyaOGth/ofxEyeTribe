@@ -9,9 +9,9 @@ An openFrameworks wrapper for [The Eye Tribe](https://theeyetribe.com/) SDK
 
 
 
-# Usage
+# Installation
 
-## Mac OSC
+## Mac OSX
 
 1. Install [Boost C++ libraries](http://www.boost.org/). Recommended version is 1.59.0, and use [Homebrew](http://brew.sh/).
 
